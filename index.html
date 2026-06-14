@@ -287,22 +287,17 @@ thead th{padding:0;border-bottom:1px solid var(--border);font-weight:400}
 }
 #wRow th:first-child{border-right:1px solid rgba(200,80,200,.12);height:18px}
 
-/* JS-driven sticky date header (see #stickyDates) */
+/* JS sticky date header */
 #stickyDates{
-  position:fixed;
-  left:0;right:0;
-  z-index:150;
+  position:fixed;left:0;right:0;z-index:150;
   background:#0d0b1a;
   border-bottom:1px solid rgba(255,255,255,.07);
-  display:none;
-  overflow:hidden;
+  display:none;overflow:hidden;
+  will-change:transform;
 }
-#stickyDates table{border-collapse:collapse;white-space:nowrap;table-layout:fixed}
-#stickyDates .th-date,.th-d,.th-w{pointer-events:none}
-#stickyDates thead th:first-child{
-  position:sticky;left:0;z-index:12;
-  background:#0d0b1a;
-}
+#stickyDates table{border-collapse:collapse;white-space:nowrap;table-layout:fixed;will-change:transform}
+#stickyDates thead th:first-child{position:sticky;left:0;z-index:12;background:#0d0b1a}
+#stickyDates .th-d,#stickyDates .th-w{pointer-events:none}
 
 .th-date{min-width:38px;width:38px}
 .th-d{height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,255,255,.62)}
@@ -922,72 +917,101 @@ loadAndRender(curPeriod);
 setInterval(()=>loadAndRender(curPeriod),5*60*1000);
 
 /* =====================================================
-   STICKY DATE HEADER  (JS-driven, avoids overflow-x issue)
+   STICKY DATE HEADER (JS-driven, flicker-free)
 ===================================================== */
 (function(){
   const sticky=document.createElement('div');
   sticky.id='stickyDates';
   document.body.insertBefore(sticky,document.body.firstChild);
 
-  let built=false;
+  let built=false, widthsSynced=false, ticking=false, visible=false;
+  const GAP=5; // px hysteresis to prevent boundary flicker
 
   function build(){
     const dRow=document.getElementById('dRow');
     const wRow=document.getElementById('wRow');
     if(!dRow||!wRow) return;
     const tbl=document.createElement('table');
-    tbl.style.cssText='border-collapse:collapse;white-space:nowrap;width:100%';
+    tbl.style.cssText='border-collapse:collapse;white-space:nowrap;table-layout:fixed';
     const head=document.createElement('thead');
     head.appendChild(dRow.cloneNode(true));
     head.appendChild(wRow.cloneNode(true));
     tbl.appendChild(head);
     sticky.innerHTML='';
     sticky.appendChild(tbl);
-    built=true;
+    built=true; widthsSynced=false;
   }
 
   function syncWidths(){
+    if(widthsSynced) return;
     const origRow=document.getElementById('dRow');
     if(!origRow||!built) return;
     const origThs=origRow.querySelectorAll('th');
     const cloneThs=sticky.querySelectorAll('tr:first-child th');
+    let total=0;
     origThs.forEach((th,i)=>{
-      if(cloneThs[i]) cloneThs[i].style.width=th.offsetWidth+'px';
+      const w=th.getBoundingClientRect().width;
+      if(cloneThs[i]) cloneThs[i].style.width=w+'px';
+      total+=w;
     });
+    const tbl=sticky.querySelector('table');
+    if(tbl&&total>0){tbl.style.width=total+'px'; widthsSynced=true;}
   }
 
   function syncScroll(){
+    if(!built) return;
     const tw=document.querySelector('.table-wrap');
-    if(tw&&built) sticky.querySelector('table').style.transform='translateX(-'+tw.scrollLeft+'px)';
+    const tbl=sticky.querySelector('table');
+    if(tw&&tbl) tbl.style.transform='translateX(-'+tw.scrollLeft+'px)';
   }
 
-  function onScroll(){
+  function update(){
+    ticking=false;
     const hdr=document.querySelector('header');
     const dRow=document.getElementById('dRow');
     if(!hdr||!dRow) return;
     const headerH=hdr.offsetHeight;
-    const dRowTop=dRow.getBoundingClientRect().top;
-    if(dRowTop<headerH){
+    const top=dRow.getBoundingClientRect().top;
+
+    if(!visible && top<headerH-GAP){
+      // Show sticky
       if(!built) build();
-      sticky.style.display='block';
       sticky.style.top=headerH+'px';
+      sticky.style.display='block';
+      visible=true;
       syncWidths();
       syncScroll();
-    } else {
+    } else if(visible && top>headerH+GAP){
+      // Hide sticky
       sticky.style.display='none';
+      visible=false;
+    } else if(visible){
+      syncScroll();
     }
   }
 
+  function onScroll(){
+    if(!ticking){requestAnimationFrame(update);ticking=true;}
+  }
+
+  function onResize(){
+    built=false; widthsSynced=false; visible=false;
+    sticky.style.display='none';
+    requestAnimationFrame(update);
+  }
+
+  function attachTW(){
+    const tw=document.querySelector('.table-wrap');
+    if(tw) tw.addEventListener('scroll',syncScroll,{passive:true});
+  }
+
   window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('resize',()=>{built=false;onScroll()});
-  document.querySelector('.table-wrap')?.addEventListener('scroll',syncScroll,{passive:true});
-  // Re-attach scroll listener after render (table-wrap gets recreated on nav)
+  window.addEventListener('resize',onResize);
+  attachTW();
+
   document.addEventListener('click',e=>{
     if(e.target.closest('.nav-btn')){
-      setTimeout(()=>{
-        document.querySelector('.table-wrap')?.addEventListener('scroll',syncScroll,{passive:true});
-        built=false;
-      },400);
+      setTimeout(()=>{built=false;widthsSynced=false;attachTW();update();},450);
     }
   });
 })();

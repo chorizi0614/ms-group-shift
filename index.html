@@ -152,6 +152,59 @@ header{
 .sdot.err{background:#f44336}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 #stxt{font-size:10px;color:var(--muted)}
+#supdated{font-size:10px;color:var(--muted);margin-left:auto;opacity:.5}
+
+/* ===== TODAY PANEL ===== */
+.today-panel{
+  background:linear-gradient(180deg,rgba(255,220,80,.04) 0%,transparent 100%);
+  border-bottom:1px solid rgba(255,220,80,.1);
+  padding:8px 12px;
+  display:none;
+}
+.today-panel.visible{display:block}
+.today-panel-head{
+  font-size:10px;
+  color:rgba(255,220,80,.6);
+  font-weight:700;
+  letter-spacing:1.5px;
+  margin-bottom:6px;
+}
+.today-cast-list{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:2px;
+}
+.today-cast-list::-webkit-scrollbar{display:none}
+.today-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:var(--surface2);
+  border-radius:20px;
+  padding:4px 10px 4px 7px;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.today-chip .tc-dot{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+}
+.today-chip .tc-name{color:rgba(255,255,255,.85)}
+.today-chip .tc-time{
+  font-size:9px;
+  font-weight:400;
+  color:rgba(255,255,255,.4);
+  margin-left:2px;
+}
+.today-chip.tc-L{border:1px solid rgba(91,200,232,.3)}
+.today-chip.tc-L .tc-dot{background:var(--L)}
+.today-chip.tc-M{border:1px solid rgba(232,64,160,.3)}
+.today-chip.tc-M .tc-dot{background:var(--M)}
+.today-chip.tc-Y{border:1px solid rgba(212,168,0,.3)}
+.today-chip.tc-Y .tc-dot{background:var(--Y)}
 
 /* ===== TABLE ===== */
 .table-wrap{
@@ -387,9 +440,15 @@ tbody td.cd-fri{background:var(--fri-col)}
   </div>
 </header>
 
+<div id="todayPanel" class="today-panel">
+  <div class="today-panel-head">▸ 今日のお給仕</div>
+  <div class="today-cast-list" id="todayCastList"></div>
+</div>
+
 <div class="status-bar">
   <span class="sdot" id="sdot"></span>
   <span id="stxt">読み込み中…</span>
+  <span id="supdated"></span>
 </div>
 
 <div class="table-wrap">
@@ -545,6 +604,47 @@ async function loadSheet(key) {
 function setStatus(cls, txt) {
   document.getElementById('sdot').className = 'sdot ' + cls;
   document.getElementById('stxt').textContent = txt;
+  if (cls === 'ok') {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('supdated').textContent = '更新 ' + hh + ':' + mm;
+  }
+}
+
+/* =====================================================
+   TODAY PANEL
+===================================================== */
+function renderTodayPanel(allRows) {
+  const panel = document.getElementById('todayPanel');
+  const list  = document.getElementById('todayCastList');
+  const now   = new Date();
+  const y = now.getFullYear(), m = now.getMonth()+1, d = now.getDate();
+  const { y:py, m:pm } = curPeriod;
+
+  // Show only when viewing the current month
+  if (y !== py || m !== pm) { panel.classList.remove('visible'); return; }
+
+  const STORE_LABEL = { L:'Linaria', M:"I's Melty", Y:'Lily Maid' };
+  const todayShifts = allRows.filter(([, day]) => day === d);
+  if (!todayShifts.length) { panel.classList.remove('visible'); return; }
+
+  list.innerHTML = '';
+  // Sort by store L→M→Y, then name
+  const ORDER = { L:0, M:1, Y:2 };
+  todayShifts
+    .sort((a,b) => (ORDER[a[2]]??9) - (ORDER[b[2]]??9) || a[0].localeCompare(b[0], 'ja'))
+    .forEach(([name, , store, time]) => {
+      const chip = document.createElement('div');
+      chip.className = 'today-chip tc-' + store;
+      chip.innerHTML =
+        '<span class="tc-dot"></span>' +
+        '<span class="tc-name">' + name + '</span>' +
+        '<span class="tc-time">' + time + '</span>';
+      list.appendChild(chip);
+    });
+
+  panel.classList.add('visible');
 }
 
 /* =====================================================
@@ -692,14 +792,20 @@ function setFilter(store, btn) {
 async function loadAndRender(period) {
   setStatus('ld', '読み込み中…');
   const key = periodKey(period);
+
+  // URL ハッシュに期間を保存（ブックマーク・シェア対応）
+  location.hash = period.y + '-' + period.m + '-' + period.h;
+
   try {
     const rows = await loadSheet(key);
     render(period, rows);
+    renderTodayPanel(rows);
     setStatus('ok', 'シフト反映済み');
   } catch(e) {
     console.error(e);
     const sample = SAMPLE[key] || [];
     render(period, sample);
+    renderTodayPanel(sample);
     setStatus('err', 'サンプルデータ表示中');
   }
 }
@@ -707,8 +813,19 @@ async function loadAndRender(period) {
 /* =====================================================
    INIT
 ===================================================== */
-curPeriod = CONFIG.DEFAULT_PERIOD || detectPeriod();
+// URL ハッシュから期間を復元（例: #2026-6-2）
+function periodFromHash() {
+  const h = location.hash.replace('#','');
+  const m = h.match(/^(\d{4})-(\d{1,2})-([12])$/);
+  if (m) return { y:+m[1], m:+m[2], h:+m[3] };
+  return null;
+}
+
+curPeriod = CONFIG.DEFAULT_PERIOD || periodFromHash() || detectPeriod();
 loadAndRender(curPeriod);
+
+// 5分ごとに自動リフレッシュ
+setInterval(() => loadAndRender(curPeriod), 5 * 60 * 1000);
 </script>
 </body>
 </html>

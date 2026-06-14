@@ -528,22 +528,18 @@ function go(delta) {
 }
 
 /* =====================================================
-   SHEET LOADER
+   SHIFT LOADER (cast.linaria-cafe.com/admin/shifts_public.php)
 ===================================================== */
 async function loadSheet(key) {
-  if (!CONFIG.SHEET_ID) return null;
-  const url = 'https://docs.google.com/spreadsheets/d/' + CONFIG.SHEET_ID + '/pub?output=csv';
+  // key = "2026-6" → month = "2026-06"
+  const [y, mo] = key.split('-');
+  const month = y + '-' + mo.padStart(2, '0');
+  const url = 'https://cast.linaria-cafe.com/admin/shifts_public.php?month=' + month;
   const r = await fetch(url);
   if (!r.ok) throw new Error('HTTP ' + r.status);
-  const txt = await r.text();
-  const MAP = { linaria:'L', melty:'M', lily:'Y', l:'L', m:'M', y:'Y' };
-  return txt.trim().split('\n').slice(1).map(line => {
-    const [name,dayStr,store,time] = line.split(',').map(c => c.trim().replace(/^"|"$/g,''));
-    const day = parseInt(dayStr,10);
-    const s   = MAP[store ? store.toLowerCase().split(' ')[0] : ''] || store.toUpperCase();
-    if (!name || !day || !s || !time) return null;
-    return [name, day, s, time];
-  }).filter(Boolean);
+  const data = await r.json();
+  if (!Array.isArray(data)) throw new Error('invalid response');
+  return data; // [[name, day, store, time], ...]
 }
 
 function setStatus(cls, txt) {
@@ -695,23 +691,16 @@ function setFilter(store, btn) {
 ===================================================== */
 async function loadAndRender(period) {
   setStatus('ld', '読み込み中…');
+  const key = periodKey(period);
   try {
-    const key  = periodKey(period);
-    let rows   = await loadSheet(key);
-    if (rows) {
-      render(period, rows);
-      setStatus('ok', rows.length + '件 読み込み完了');
-    } else {
-      const sample = SAMPLE[key] || [];
-      render(period, sample);
-      setStatus('', sample.length ? 'サンプルデータ表示中' : 'データなし');
-    }
+    const rows = await loadSheet(key);
+    render(period, rows);
+    setStatus('ok', 'シフト反映済み');
   } catch(e) {
     console.error(e);
-    const key    = periodKey(period);
     const sample = SAMPLE[key] || [];
     render(period, sample);
-    setStatus('err', 'スプレッドシート読込失敗（サンプル表示中）');
+    setStatus('err', 'サンプルデータ表示中');
   }
 }
 

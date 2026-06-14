@@ -573,6 +573,8 @@ const CONFIG = {
     '2026-6': [
       { date:'6月6日',  text:'める 生誕祭' },
       { date:'6月13日', text:'あっと 生誕祭' },
+      { date:'6月26日', text:'詳細は後日発表' },
+      { date:'6月27日', text:'詳細は後日発表' },
     ],
   },
 };
@@ -869,7 +871,14 @@ function render(period, allRows){
   /* ── Events ── */
   const evList=document.getElementById('evList');
   evList.innerHTML='';
-  const evs=(CONFIG.EVENTS_BY_MONTH||{})[periodKey(period)]||[];
+  const allEvs=(CONFIG.EVENTS_BY_MONTH||{})[periodKey(period)]||[];
+  // 前半(h=1):1〜15日 / 後半(h=2):16日〜 でフィルタ
+  const evs=allEvs.filter(ev=>{
+    const mm=ev.date.match(/\d+月(\d+)日/);
+    if(!mm) return true;
+    const d=+mm[1];
+    return period.h===1 ? d<=15 : d>15;
+  });
   if(!evs.length){
     evList.innerHTML='<li style="color:rgba(255,255,255,.22);font-size:11px">イベントなし</li>';
   } else {

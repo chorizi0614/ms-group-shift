@@ -1,6 +1,883 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+TEST CONTENT
+</head>
+<body>BODY</body>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ãçµ¦ä»äºå®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<style>
+/* ===================================================
+   BRAND COLOURS
+=================================================== */
+:root {
+  --linaria:    #5bc8e8;
+  --linaria-bg: #0a1c2e;
+  --linaria-lt: #c8f0ff;
+  --melty:      #e840a0;
+  --melty-bg:   #1a0818;
+  --melty-lt:   #ffc0e8;
+  --lily:       #d4a800;
+  --lily-bg:    #0e0b04;
+  --lily-lt:    #fff0c0;
+  --page:       #f5f1fa;
+  --text:       #2a2460;
+  --border:     #e0d8f8;
+  --card:       #ffffff;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--page);color:var(--text);min-height:100vh}
+
+/* ===================================================
+   HERO â TITLE BAND  (separate from panels, no overlap)
+=================================================== */
+.hero-band {
+  background: linear-gradient(180deg,#07040e 0%,#0f0618 55%,#090412 100%);
+  padding: 30px 24px 22px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+/* large faded month numeral â stays in title band */
+.hb-num {
+  font-family: 'Dancing Script', cursive;
+  font-size: 130px;
+  font-weight: 600;
+  color: rgba(255,255,255,.03);
+  line-height: 1;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+}
+/* soft purple glow behind title */
+.hero-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 65% 90% at 50% 110%,
+    rgba(160,60,200,.14) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hb-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.hb-orn {
+  font-size: 10px;
+  letter-spacing: 10px;
+  color: rgba(200,160,255,.3);
+  margin-bottom: 2px;
+}
+.hb-title {
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: 30px;
+  font-weight: 800;
+  color: rgba(255,255,255,.92);
+  letter-spacing: 8px;
+  text-shadow: 0 0 50px rgba(180,100,255,.25), 0 2px 20px rgba(0,0,0,.6);
+}
+.hb-month {
+  font-family: 'Dancing Script', cursive;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(200,155,255,.45);
+  letter-spacing: 3px;
+}
+.hb-year {
+  font-size: 10px;
+  color: rgba(255,255,255,.18);
+  letter-spacing: 5px;
+  margin-top: 1px;
+}
+
+/* ===================================================
+   HERO â STORE PANELS
+=================================================== */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  height: 256px;
+  position: relative;
+}
+.sp {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 10px 18px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: filter .22s;
+  border-bottom: 3px solid transparent;
+}
+.sp:hover { filter: brightness(1.13) }
+.sp.active { border-bottom-width: 4px }
+.sp-L { background: linear-gradient(165deg,#071322 0%,#0d2040 55%,#091830 100%); border-bottom-color: var(--linaria) }
+.sp-M { background: linear-gradient(165deg,#130410 0%,#220720 55%,#190618 100%); border-bottom-color: var(--melty) }
+.sp-Y { background: linear-gradient(165deg,#0b0a02 0%,#181205 55%,#110e03 100%); border-bottom-color: var(--lily) }
+
+/* subtle noise */
+.sp::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.012'%3E%3Cpath d='M0 0h20v20H0zM20 20h20v20H20z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+/* bottom gradient so store name is readable */
+.sp::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  pointer-events: none;
+}
+.sp-L::after { background: linear-gradient(to top, rgba(10,28,46,.9) 0%, transparent 100%) }
+.sp-M::after { background: linear-gradient(to top, rgba(26,8,24,.9) 0%, transparent 100%) }
+.sp-Y::after { background: linear-gradient(to top, rgba(14,11,4,.9) 0%, transparent 100%) }
+
+.sp-L.active { box-shadow: inset 0 -6px 60px rgba(91,200,232,.14) }
+.sp-M.active { box-shadow: inset 0 -6px 60px rgba(232,64,160,.14) }
+.sp-Y.active { box-shadow: inset 0 -6px 60px rgba(212,168,0,.14) }
+
+.sp-logo {
+  width: 155px; height: 155px;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  transition: transform .3s ease;
+  position: relative; z-index: 2;
+  flex-shrink: 0;
+}
+.sp:hover .sp-logo { transform: scale(1.07) translateY(-3px) }
+
+.sp-logo-text {
+  font-size: 14px; font-weight: 700; letter-spacing: 1px;
+  position: relative; z-index: 2; margin-bottom: 2px;
+}
+.sp-L .sp-logo-text { color: var(--linaria-lt) }
+.sp-M .sp-logo-text { color: var(--melty-lt) }
+.sp-Y .sp-logo-text { color: var(--lily-lt) }
+
+.sp-name {
+  font-size: 10px; font-weight: 400; letter-spacing: 2.5px;
+  text-transform: uppercase;
+  position: relative; z-index: 2;
+  margin-top: 9px;
+}
+.sp-L .sp-name { color: rgba(200,240,255,.5) }
+.sp-M .sp-name { color: rgba(255,192,232,.5) }
+.sp-Y .sp-name { color: rgba(255,240,192,.5) }
+
+/* dividers between panels */
+.hero-div {
+  position: absolute; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom,
+    rgba(255,255,255,.0) 0%,
+    rgba(255,255,255,.08) 45%,
+    rgba(255,255,255,.0) 100%);
+  z-index: 10; pointer-events: none;
+}
+
+/* ===================================================
+   CONTROLS  (sticky)
+=================================================== */
+.controls {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0; z-index: 50;
+  box-shadow: 0 2px 14px rgba(50,30,100,.07);
+}
+
+.fb {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1.5px solid #e4dff4;
+  font-size: 12px; font-weight: 500; font-family: inherit;
+  cursor: pointer;
+  transition: all .18s;
+  background: #fff;
+  color: #aaa;
+  white-space: nowrap;
+}
+.fb:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.07) }
+.fb-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0 }
+
+.fb.is-all.on   { background: var(--text); color: #fff; border-color: var(--text) }
+.fb.is-L.on     { background: var(--linaria-bg); color: var(--linaria-lt); border-color: var(--linaria) }
+.fb.is-M.on     { background: var(--melty-bg); color: var(--melty-lt); border-color: var(--melty) }
+.fb.is-Y.on     { background: var(--lily-bg); color: var(--lily-lt); border-color: var(--lily) }
+
+.month-nav { margin-left: auto; display: flex; align-items: center; gap: 7px }
+.mnav-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+  width: 30px; height: 30px;
+  cursor: pointer; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; color: var(--text);
+}
+.mnav-btn:hover { background: var(--border); transform: scale(1.06) }
+.mnav-label {
+  font-size: 12px; font-weight: 600;
+  color: var(--text); min-width: 62px; text-align: center;
+}
+.sst {
+  font-size: 11px; color: #bbb;
+  display: flex; align-items: center; gap: 5px;
+}
+.sdot { width: 7px; height: 7px; border-radius: 50%; background: #ddd }
+.sdot.ok  { background: #50c878 }
+.sdot.err { background: #e05050 }
+.sdot.ld  { background: #f0a030; animation: pulse 1s infinite }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ===================================================
+   TABLE
+=================================================== */
+main { max-width: 1320px; margin: 0 auto; padding: 20px 16px 56px }
+
+.twrap {
+  overflow-x: auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(50,30,100,.09), 0 1px 4px rgba(0,0,0,.03);
+  background: var(--card);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  min-width: 860px;
+}
+
+thead th {
+  background: #f5f2ff;
+  padding: 6px 3px;
+  text-align: center;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  border-right: 1px solid #eae5f8;
+  white-space: nowrap;
+  position: sticky;
+  top: 46px;   /* â controls bar height */
+  z-index: 10;
+}
+thead th:first-child {
+  position: sticky; left: 0; z-index: 22;
+  background: #ede8ff;
+  min-width: 60px;
+  border-right: 2px solid var(--border);
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.th-d { font-size: 12px; font-weight: 700; color: var(--text) }
+.th-w { font-size: 10px; font-weight: 400; color: #9090b4; margin-top: 1px }
+.th-sun .th-w { color: #c03636 }
+.th-sat .th-w { color: #3656c0 }
+.th-today .th-d { color: #d04808 }
+.th-gold  { background: #fffbf0 !important }
+.th-sun2  { background: #fff5f4 !important }
+.th-sat2  { background: #f4f5ff !important }
+.th-today2{ background: #fff3e8 !important }
+
+/* week separator â left border on Monday columns */
+.wk-sep { border-left: 2px dashed rgba(80,60,160,.13) !important }
+
+tbody tr {
+  border-bottom: 1px solid #f0ecff;
+  transition: background .1s;
+}
+tbody tr:hover { background: #faf8ff }
+tbody tr.rh { display: none }
+
+tbody td {
+  padding: 4px 2px;
+  text-align: center;
+  border-right: 1px solid #f0ecff;
+  height: 36px;
+  vertical-align: middle;
+}
+tbody td:first-child {
+  position: sticky; left: 0;
+  background: var(--card);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--text);
+  border-right: 2px solid var(--border);
+  z-index: 5;
+  padding: 4px 12px;
+  white-space: nowrap;
+  text-align: left;
+  letter-spacing: .4px;
+}
+tbody tr:hover td:first-child { background: #faf8ff }
+
+.cd-sun  td { background: rgba(200,50,50,.035) }
+.cd-sat  td { background: rgba(60,70,210,.035) }
+.cd-gold td { background: rgba(240,210,60,.055) }
+.cd-today td{ background: rgba(240,150,60,.055) }
+
+.shift {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 10.5px; font-weight: 600;
+  min-width: 38px;
+  line-height: 1.25;
+  white-space: nowrap;
+  transition: opacity .2s, transform .15s;
+}
+.shift:hover { transform: scale(1.09) }
+.shift-L {
+  background: linear-gradient(135deg,#d6f4fc,#bde8f8);
+  color: #075e7c;
+  border: 1.5px solid rgba(91,200,232,.55);
+}
+.shift-M {
+  background: linear-gradient(135deg,#fde0f3,#f8c8e8);
+  color: #7a0050;
+  border: 1.5px solid rgba(232,64,160,.5);
+}
+.shift-Y {
+  background: linear-gradient(135deg,#fdf6c8,#f8ee98);
+  color: #584200;
+  border: 1.5px solid rgba(212,168,0,.5);
+}
+.shift.dm { opacity: .1 }
+
+/* ===================================================
+   BOTTOM
+=================================================== */
+.btm {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.ev-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px 26px;
+  box-shadow: 0 2px 16px rgba(50,30,100,.06);
+  border-left: 3px solid var(--melty);
+}
+.ev-head {
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ev-head::before { content: 'â¦'; color: var(--melty); font-size: 11px }
+
+.ev-list { list-style: none }
+.ev-list li {
+  font-size: 12.5px;
+  padding: 6px 0;
+  display: flex; align-items: center; gap: 14px;
+  color: #444466;
+  border-bottom: 1px dashed #eee;
+}
+.ev-list li:last-child { border: none }
+.ev-date {
+  font-size: 11px; font-weight: 700;
+  color: #8080cc; min-width: 52px; flex-shrink: 0;
+}
+
+/* legend */
+.legend {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #ede8ff;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.lg-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: #8888aa;
+}
+.lg-sep {
+  width: 1px; height: 14px;
+  background: #ddd;
+  margin: 0 4px;
+}
+
+/* logo tiles */
+.lf { display: flex; flex-direction: column; align-items: flex-end; gap: 8px }
+.lf-label {
+  font-size: 10px;
+  color: #bbb;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  width: 100%;
+}
+.lf-row { display: flex; gap: 10px }
+.lfc {
+  width: 86px; height: 86px;
+  border-radius: 14px;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .22s, box-shadow .22s;
+  position: relative;
+}
+.lfc::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  pointer-events: none;
+}
+.lfc:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.35) }
+.lfc-L { background: var(--linaria-bg) }
+.lfc-M { background: var(--melty-bg) }
+.lfc-Y { background: var(--lily-bg) }
+.lfc img { width: 66px; height: 66px; object-fit: contain; mix-blend-mode: screen }
+
+/* ===================================================
+   RESPONSIVE
+=================================================== */
+@media(max-width:680px) {
+  .hero { height: 200px }
+  .sp-logo { width: 110px; height: 110px }
+  .hb-title { font-size: 22px; letter-spacing: 5px }
+  .btm { grid-template-columns: 1fr }
+  .lf { align-items: center }
+  .lf-row { justify-content: center }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<header>
+  <!-- Title band â completely separate from logo panels -->
+  <div class="hero-band">
+    <div class="hb-num" id="moNum"></div>
+    <div class="hb-inner">
+      <div class="hb-orn">â¦ &nbsp;&nbsp; â¦ &nbsp;&nbsp; â¦</div>
+      <div class="hb-title">ãçµ¦ä»äºå®</div>
+      <div class="hb-month" id="moSub"></div>
+      <div class="hb-year" id="moYear"></div>
+    </div>
+  </div>
+
+  <!-- Store logo panels -->
+  <div class="hero" id="hero">
+    <div class="sp sp-L active" id="sp-L" onclick="filter('L')">
+      <img class="sp-logo" src="logos/linaria.png" alt="Linaria"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <div class="sp-logo-text" style="display:none">â Linaria</div>
+      <div class="sp-name">Linaria Â· Cafe &amp; Bar</div>
+    </div>
+    <div class="sp sp-M" id="sp-M" onclick="filter('M')">
+      <img class="sp-logo" src="logos/melty.png" alt="I's Melty"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <div class="sp-logo-text" style="display:none">â¡ I's Melty</div>
+      <div class="sp-name">I's Melty</div>
+    </div>
+    <div class="sp sp-Y" id="sp-Y" onclick="filter('Y')">
+      <img class="sp-logo" src="logos/lily-maid.png" alt="Lily Maid"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <div class="sp-logo-text" style="display:none">â¦ Lily Maid</div>
+      <div class="sp-name">Lily Maid Â· Cafe &amp; Bar</div>
+    </div>
+    <div class="hero-div" style="left:33.333%"></div>
+    <div class="hero-div" style="left:66.666%"></div>
+  </div>
+</header>
+
+<!-- ================ CONTROLS ================= -->
+<div class="controls">
+  <button class="fb is-all on"  onclick="filter('all',this)"><span class="fb-dot" style="background:var(--text)"></span>å¨åºè</button>
+  <button class="fb is-L"       onclick="filter('L',this)"><span class="fb-dot" style="background:var(--linaria)"></span>Linaria</button>
+  <button class="fb is-M"       onclick="filter('M',this)"><span class="fb-dot" style="background:var(--melty)"></span>I's Melty</button>
+  <button class="fb is-Y"       onclick="filter('Y',this)"><span class="fb-dot" style="background:var(--lily)"></span>Lily Maid</button>
+  <div class="month-nav">
+    <button class="mnav-btn" onclick="changeMonth(-1)">â¹</button>
+    <span class="mnav-label" id="navLabel"></span>
+    <button class="mnav-btn" onclick="changeMonth(+1)">âº</button>
+  </div>
+  <div class="sst"><span class="sdot" id="sdot"></span><span id="stxt">èª­ã¿è¾¼ã¿ä¸­â¦</span></div>
+</div>
+
+<!-- ================= TABLE ================== -->
+<main>
+  <div class="twrap">
+    <table id="tbl">
+      <thead>
+        <tr id="dRow"><th rowspan="2">å å</th></tr>
+        <tr id="wRow"></tr>
+      </thead>
+      <tbody id="tBody"></tbody>
+    </table>
+  </div>
+
+  <div class="btm">
+    <!-- Event card + legend -->
+    <div class="ev-card">
+      <div class="ev-head">ã¤ãã³ãåç¥</div>
+      <ul class="ev-list" id="evList"></ul>
+      <div class="legend">
+        <div class="lg-item">
+          <span class="shift shift-L" style="min-width:auto;padding:2px 5px">â </span>Linaria
+        </div>
+        <div class="lg-item">
+          <span class="shift shift-M" style="min-width:auto;padding:2px 5px">â </span>I's Melty
+        </div>
+        <div class="lg-item">
+          <span class="shift shift-Y" style="min-width:auto;padding:2px 5px">â </span>Lily Maid
+        </div>
+        <div class="lg-sep"></div>
+        <div class="lg-item">æéæ«å°¾ã® <strong>L</strong> = éåºã¾ã§</div>
+      </div>
+    </div>
+
+    <!-- Logo tiles -->
+    <div class="lf">
+      <div class="lf-label">åºèã§çµãè¾¼ã¿</div>
+      <div class="lf-row">
+        <div class="lfc lfc-L" onclick="filter('L')">
+          <img src="logos/linaria.png" alt="Linaria"
+               onerror="this.parentElement.innerHTML='<span style=color:#5bc8e8;font-size:11px;font-weight:700>Linaria</span>'">
+        </div>
+        <div class="lfc lfc-M" onclick="filter('M')">
+          <img src="logos/melty.png" alt="I\'s Melty"
+               onerror="this.parentElement.innerHTML='<span style=color:#e840a0;font-size:11px;font-weight:700>I\'s Melty</span>'">
+        </div>
+        <div class="lfc lfc-Y" onclick="filter('Y')">
+          <img src="logos/lily-maid.png" alt="Lily Maid"
+               onerror="this.parentElement.innerHTML='<span style=color:#d4a800;font-size:11px;font-weight:700>Lily Maid</span>'">
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+/* =====================================================
+   ââ è¨­å®ï¼ããã ãè§¦ãã°OKï¼ââ
+====================================================== */
+const CONFIG = {
+  // Googleã¹ãã¬ããã·ã¼ãIDï¼ç©ºæ¬âãµã³ãã«ãã¼ã¿è¡¨ç¤ºï¼
+  SHEET_ID: '',
+
+  // ã¤ãã³ãåç¥ï¼æãã¨ã«æ¸ãæããï¼
+  EVENTS_BY_MONTH: {
+    '2026-6': [
+      { date: '6æ6æ¥',  text: 'ãã çèª' },
+      { date: '6æ13æ¥', text: 'ãã£ã¨ çèª' },
+    ],
+  },
+
+  DEFAULT_MONTH: null,
+};
+
+/* =====================================================
+   ãµã³ãã«ãã¼ã¿
+====================================================== */
+const SAMPLE = {
+  '2026-6': [
+    ['ãã',3,'L','18-L'],['ãã',4,'L','18-L'],['ãã',5,'M','20-L'],
+    ['ãã',9,'L','18-L'],['ãã',10,'L','18-L'],['ãã',12,'L','18-L'],['ãã',15,'L','18-L'],
+    ['ãã',2,'M','18-23'],['ãã',5,'M','19-24'],['ãã',6,'M','19-24'],
+    ['ãã',9,'M','18-23'],['ãã',12,'M','19-24'],['ãã',13,'M','19-24'],
+    ['ã¯ã',1,'L','19-23'],['ã¯ã',2,'L','20-23'],['ã¯ã',5,'L','18-23'],
+    ['ã¯ã',6,'L','18-L'],['ã¯ã',9,'L','20-23'],['ã¯ã',10,'L','18-22'],
+    ['ã¯ã',11,'L','19-23'],['ã¯ã',12,'L','18-23'],['ã¯ã',13,'L','18-L'],
+    ['ãªã',1,'L','18-L'],['ãªã',3,'L','18-L'],['ãªã',5,'L','18-L'],
+    ['ãªã',6,'L','18-L'],['ãªã',7,'L','18-L'],['ãªã',9,'L','18-L'],
+    ['ãªã',11,'L','18-L'],['ãªã',12,'L','18-L'],['ãªã',13,'L','18-L'],
+    ['ãªã',14,'L','18-L'],['ãªã',15,'L','18-L'],
+    ['ã­ãã¡',5,'L','18-L'],['ã­ãã¡',12,'L','18-L'],['ã­ãã¡',13,'L','18-L'],['ã­ãã¡',14,'L','19-L'],
+    ['ãã',2,'L','18-23'],['ãã',3,'L','18-23'],['ãã',5,'L','18-L'],
+    ['ãã',6,'L','18-L'],['ãã',8,'L','18-23'],['ãã',10,'L','18-23'],
+    ['ãã',11,'L','18-23'],['ãã',12,'L','18-L'],['ãã',13,'L','18-L'],
+    ['ãããã',1,'Y','18-24'],['ãããã',3,'Y','18-24'],['ãããã',6,'Y','18-L'],
+    ['ãããã',8,'Y','18-24'],['ãããã',11,'Y','18-24'],['ãããã',13,'Y','18-23.5'],['ãããã',15,'Y','18-24'],
+    ['ãã',5,'M','18-L'],['ãã',6,'Y','18-23.5'],
+    ['ãã',2,'L','18-23'],['ãã',9,'L','18-23'],['ãã',12,'L','18-L'],
+    ['ãã£ã¨',2,'L','18-23'],['ãã£ã¨',5,'L','18-L'],['ãã£ã¨',6,'L','18-L'],
+    ['ãã£ã¨',9,'L','19-23'],['ãã£ã¨',11,'L','18-L'],['ãã£ã¨',13,'L','18-L'],['ãã£ã¨',15,'L','18-L'],
+    ['ã·ã',5,'M','19-L'],['ã·ã',6,'L','18-L'],['ã·ã',10,'L','18-L'],['ã·ã',13,'L','18-L'],['ã·ã',15,'L','18-L'],
+    ['ãã«',1,'L','18-23'],['ãã«',2,'L','18-23'],['ãã«',4,'L','18-23'],
+    ['ãã«',5,'L','19-23'],['ãã«',9,'M','18-23'],['ãã«',11,'L','18-23'],
+    ['ãã«',12,'L','18-23'],['ãã«',13,'L','18-23'],
+    ['ãã¾',1,'L','19-L'],['ãã¾',3,'L','18-L'],['ãã¾',4,'L','18-L'],
+    ['ãã¾',5,'L','18-L'],['ãã¾',6,'L','18-L'],['ãã¾',8,'L','18-23'],
+    ['ãã¾',9,'L','18-23'],['ãã¾',10,'L','18-23'],['ãã¾',11,'L','18-23'],
+    ['ãã¾',13,'L','18-23'],['ãã¾',15,'L','18-L'],
+    ['ããªã®',5,'M','18-24'],['ããªã®',6,'L','18-23'],['ããªã®',12,'L','19-24'],
+    ['ããã',3,'M','18-23'],['ããã',10,'L','18-23'],['ããã',15,'M','18-23'],
+    ['ãã',9,'L','18-L'],['ãã',12,'L','18-L'],['ãã',13,'L','18-L'],
+    ['ã²ã',13,'L','18-L'],
+    ['ããã',2,'M','18-L'],['ããã',3,'M','18-L'],['ããã',5,'M','19-L'],['ããã',6,'M','20-L'],
+  ]
+};
+
+/* =====================================================
+   STATE
+====================================================== */
+const WD = ['æ¥','æ','ç«','æ°´','æ¨','é','å'];
+const MO_EN = ['','January','February','March','April','May','June',
+               'July','August','September','October','November','December'];
+
+let curKey = CONFIG.DEFAULT_MONTH || (() => {
+  const n = new Date();
+  return `${n.getFullYear()}-${n.getMonth()+1}`;
+})();
+let activeFilter = 'all';
+
+/* =====================================================
+   SHEET LOADER
+====================================================== */
+function sheetId(key) {
+  if (CONFIG.SHEET_BY_MONTH && CONFIG.SHEET_BY_MONTH[key]) return CONFIG.SHEET_BY_MONTH[key];
+  return CONFIG.SHEET_ID || '';
+}
+
+async function loadSheet(key) {
+  const id = sheetId(key);
+  if (!id) return null;
+  const url = `https://docs.google.com/spreadsheets/d/${id}/pub?output=csv`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const txt = await r.text();
+  const STORE_MAP = { linaria:'L', melty:'M', lily:'Y', l:'L', m:'M', y:'Y' };
+  return txt.trim().split('\n').slice(1).map(line => {
+    const [name, dayStr, store, time] = line.split(',').map(c => c.trim().replace(/^"|"$/g,''));
+    const day = parseInt(dayStr, 10);
+    const s = STORE_MAP[store?.toLowerCase()] || store?.toUpperCase();
+    if (!name || !day || !s || !time) return null;
+    return [name, day, s, time];
+  }).filter(Boolean);
+}
+
+function setStatus(cls, txt) {
+  document.getElementById('sdot').className = 'sdot ' + cls;
+  document.getElementById('stxt').textContent = txt;
+}
+
+/* =====================================================
+   RENDER
+====================================================== */
+function parseKey(k) {
+  const [y, m] = k.split('-').map(Number);
+  return { y, m };
+}
+
+function render(key, rows) {
+  const { y, m } = parseKey(key);
+  const dim = new Date(y, m, 0).getDate();
+  const todayD = (() => {
+    const n = new Date();
+    return (n.getFullYear()===y && n.getMonth()+1===m) ? n.getDate() : -1;
+  })();
+
+  // Hero / nav labels
+  document.querySelector('#moNum').textContent = m;
+  document.querySelector('#moSub').textContent = MO_EN[m];
+  document.querySelector('#moYear').textContent = y;
+  document.getElementById('navLabel').textContent = `${y}/${String(m).padStart(2,'0')}`;
+  document.title = `${m}æ ãçµ¦ä»äºå®`;
+
+  // Date headers
+  const dRow = document.getElementById('dRow');
+  const wRow = document.getElementById('wRow');
+  while (dRow.children.length > 1) dRow.removeChild(dRow.lastChild);
+  wRow.innerHTML = '';
+
+  for (let d = 1; d <= dim; d++) {
+    const w = new Date(y, m-1, d).getDay();
+    const isSun=w===0, isSat=w===6, isFri=w===5, isMon=w===1, isT=d===todayD;
+    const baseCls = isT ? 'th-today2' : isFri ? 'th-gold' : isSun ? 'th-sun2' : isSat ? 'th-sat2' : '';
+    const wCls   = isSun ? 'th-sun' : isSat ? 'th-sat' : '';
+    const tCls   = isT  ? 'th-today' : '';
+    const sepCls = (isMon && d > 1) ? ' wk-sep' : '';
+
+    const th1 = document.createElement('th');
+    th1.className = baseCls + sepCls;
+    th1.innerHTML = `<div class="th-d ${tCls}">${d}</div>`;
+    dRow.appendChild(th1);
+
+    const th2 = document.createElement('th');
+    th2.className = baseCls + sepCls;
+    th2.innerHTML = `<div class="th-w ${wCls}">${WD[w]}</div>`;
+    wRow.appendChild(th2);
+  }
+
+  // Body
+  const tbody = document.getElementById('tBody');
+  tbody.innerHTML = '';
+  const staffMap = new Map();
+  rows.forEach(([name, day, store, time]) => {
+    if (!staffMap.has(name)) staffMap.set(name, []);
+    staffMap.get(name).push({ day, store, time });
+  });
+
+  staffMap.forEach((shifts, name) => {
+    const tr = document.createElement('tr');
+    const stores = new Set(shifts.map(s => s.store));
+    tr.dataset.stores = [...stores].join(',');
+
+    const nameTd = document.createElement('td');
+    nameTd.textContent = name;
+    tr.appendChild(nameTd);
+
+    const dayMap = {};
+    shifts.forEach(s => { dayMap[s.day] = s; });
+
+    for (let d = 1; d <= dim; d++) {
+      const w = new Date(y, m-1, d).getDay();
+      const td = document.createElement('td');
+      const isT = d === todayD;
+      const isMon = w === 1;
+      const rowCls = isT ? 'cd-today' : w===5 ? 'cd-gold' : w===0 ? 'cd-sun' : w===6 ? 'cd-sat' : '';
+      if (rowCls) tr.className = rowCls;
+      if (isMon && d > 1) td.classList.add('wk-sep');
+      if (dayMap[d]) {
+        const s = dayMap[d];
+        const span = document.createElement('span');
+        span.className = `shift shift-${s.store}`;
+        span.dataset.store = s.store;
+        span.textContent = s.time;
+        td.appendChild(span);
+      }
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  });
+
+  // Events
+  const evList = document.getElementById('evList');
+  evList.innerHTML = '';
+  const evs = (CONFIG.EVENTS_BY_MONTH && CONFIG.EVENTS_BY_MONTH[key]) || [];
+  if (evs.length === 0) {
+    evList.innerHTML = '<li style="color:#bbb;font-size:11px">ã¤ãã³ããªã</li>';
+  } else {
+    evs.forEach(({ date, text }) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="ev-date">${date}</span>${text}`;
+      evList.appendChild(li);
+    });
+  }
+
+  applyFilter(activeFilter);
+}
+
+/* =====================================================
+   FILTER
+====================================================== */
+function applyFilter(store) {
+  document.querySelectorAll('#tBody tr').forEach(tr => {
+    if (store === 'all') {
+      tr.classList.remove('rh');
+      tr.querySelectorAll('.shift').forEach(s => s.classList.remove('dm'));
+    } else {
+      const ss = tr.dataset.stores ? tr.dataset.stores.split(',') : [];
+      ss.includes(store) ? tr.classList.remove('rh') : tr.classList.add('rh');
+      tr.querySelectorAll('.shift').forEach(s => {
+        s.dataset.store === store ? s.classList.remove('dm') : s.classList.add('dm');
+      });
+    }
+  });
+}
+
+function filter(store, btn) {
+  activeFilter = store;
+  document.querySelectorAll('.sp').forEach(p => p.classList.remove('active'));
+  if (store !== 'all') {
+    const p = document.getElementById('sp-' + store);
+    if (p) p.classList.add('active');
+  }
+  document.querySelectorAll('.fb').forEach(b => b.classList.remove('on'));
+  if (btn) { btn.classList.add('on'); }
+  else {
+    const cls = store === 'all' ? 'is-all' : `is-${store}`;
+    const fb = document.querySelector('.fb.' + cls);
+    if (fb) fb.classList.add('on');
+  }
+  applyFilter(store);
+}
+
+/* =====================================================
+   MONTH NAV
+====================================================== */
+function changeMonth(delta) {
+  let { y, m } = parseKey(curKey);
+  m += delta;
+  if (m < 1) { m = 12; y--; }
+  if (m > 12) { m = 1; y++; }
+  curKey = `${y}-${m}`;
+  loadAndRender(curKey);
+}
+
+/* =====================================================
+   LOAD + RENDER
+====================================================== */
+async function loadAndRender(key) {
+  setStatus('ld', 'èª­ã¿è¾¼ã¿ä¸­â¦');
+  try {
+    let rows = await loadSheet(key);
+    if (rows) {
+      render(key, rows);
+      setStatus('ok', `${rows.length}ä»¶ èª­ã¿è¾¼ã¿å®äº`);
+    } else {
+      const sample = SAMPLE[key] || [];
+      render(key, sample);
+      setStatus('', sample.length ? 'ãµã³ãã«ãã¼ã¿è¡¨ç¤ºä¸­' : 'ãã¼ã¿ãªã');
+    }
+  } catch(e) {
+    console.error(e);
+    const sample = SAMPLE[key] || [];
+    render(key, sample);
+    setStatus('err', 'ã¹ãã·èª­è¾¼å¤±æï¼ãµã³ãã«è¡¨ç¤ºï¼');
+  }
+}
+
+loadAndRender(curKey);
+</script>
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="ja">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>お給仕予定</title>

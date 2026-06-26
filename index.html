@@ -576,6 +576,7 @@ body.compact .shift{font-size:7.5px;padding:2px 3px;min-width:22px;border-radius
 ===================================================== */
 const CONFIG = {
   PHP_URL: 'https://cast.linaria-cafe.com/admin/shifts_public.php',
+  EVENTS_URL: 'https://cast.linaria-cafe.com/admin/events_public.php',
   PHOTO_BASE: 'https://cast.linaria-cafe.com/admin/img/cast/',
   STORE_LOGO: {
     L: 'https://linaria-cafe.com/img/logo-linaria.webp',
@@ -586,8 +587,8 @@ const CONFIG = {
     '2026-6': [
       { date:'6月6日',  text:'める 生誕祭' },
       { date:'6月13日', text:'あっと 生誕祭' },
-      { date:'6月26日', text:'詳細は後日発表' },
-      { date:'6月27日', text:'詳細は後日発表' },
+      { date:'6月26日', text:'パジャマイベント' },
+      { date:'6月27日', text:'パジャマイベント' },
     ],
   },
 };
@@ -930,10 +931,22 @@ function setFilter(store,btn){
 /* =====================================================
    LOAD + RENDER
 ===================================================== */
+async function loadEvents(period){
+  try{
+    const[y,mo]=periodKey(period).split('-');
+    const month=y+'-'+mo.padStart(2,'0');
+    const r=await fetch(CONFIG.EVENTS_URL+'?month='+month,{cache:'no-store'});
+    if(!r.ok) return;
+    const data=await r.json();
+    if(Array.isArray(data)) CONFIG.EVENTS_BY_MONTH[periodKey(period)]=data;
+  }catch(e){ console.warn('events fetch',e); }
+}
+
 async function loadAndRender(period){
   setStatus('ld','読み込み中…');
   const key=periodKey(period);
   location.hash=period.y+'-'+period.m+'-'+period.h;
+  await loadEvents(period);
   try{
     const rows=await loadSheet(key);
     render(period,rows);

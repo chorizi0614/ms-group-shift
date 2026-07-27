@@ -590,8 +590,6 @@ tbody td:first-child{color:#3b3944;border-right:1px solid rgba(170,110,160,.16)}
 #cmpBtn{display:none!important}
 #saveImgBtn{bottom:20px!important}
 /* 画像保存: 表全体が切れないよう幅を解放して撮影 */
-.exporting .wrap{max-width:none!important;width:max-content!important;margin:0!important}
-.exporting header,.exporting .logo-band{width:100%!important}
 
 
 
@@ -603,29 +601,16 @@ tbody td.cd-today{background:var(--today-bg);box-shadow:inset 2px 0 rgba(220,150
 body.fit .today-panel{display:none!important}
 body.fit .status-bar{display:none!important}
 body.fit #stickyDates{display:none!important}
-body.fit .logo-band{padding:calc(5px + env(safe-area-inset-top)) 12px 4px}
-body.fit .ms-logo{height:30px;margin-bottom:1px}
-body.fit .header-title{font-size:11px;letter-spacing:3px}
-body.fit .header-period{font-size:9px;margin-top:2px}
-body.fit .filter-row{padding:4px 8px;gap:4px}
-body.fit .ftab{min-height:30px;font-size:9px;padding:3px;border-radius:16px}
-body.fit .ftab-logo{height:13px;max-width:44px}
-body.fit .ftab-name{font-size:7.5px}
-body.fit .nav-row{padding:3px 10px;gap:12px}
-body.fit .nav-btn{width:26px;height:26px;font-size:17px}
-body.fit #navLabel{font-size:12px;min-width:108px}
-body.fit .table-wrap{overflow:hidden}
-body.fit #fitScaler{transform-origin:top left}
+body.fit .logo-band{padding-top:calc(6px + env(safe-area-inset-top))}
 body.fit .table-wrap{overflow:visible}
-body.fit .bottom-section{padding:12px 12px 26px;gap:10px}
+#posterWrap{width:max-content;margin:0 auto}
 body.fit .shift{border-radius:6px;letter-spacing:-.2px}
 
 /* ===== 画像保存(撮影)用: 写真/ロゴ/装飾を隠しクロスオリジン回避 ===== */
-.exporting .today-panel,.exporting .status-bar,.exporting #stickyDates,.exporting .cmp-btn,.exporting #saveImgBtn,.exporting .legend,.exporting #tapHint{display:none!important}
-.exporting .c-photo,.exporting .ftab-logo,.exporting .ms-logo{display:none!important}
+.exporting .today-panel,.exporting .status-bar,.exporting #stickyDates,.exporting .cmp-btn,.exporting #saveImgBtn,.exporting #tapHint{display:none!important}
+.exporting .c-photo,.exporting .tc-photo,.exporting .ftab-logo,.exporting .lg-logo{display:none!important}
 .exporting .ms-logo-fallback{display:block!important}
 .exporting .table-wrap{overflow:visible!important;height:auto!important}
-.exporting #fitScaler{transform:none!important}
 .exporting .c-name{font-size:12px}
 </style>
 </head>
@@ -1237,61 +1222,51 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
 
 <script>
 (function(){
-  var KEY='msShiftFitMode';
-  var wrap=document.querySelector('.table-wrap'); if(!wrap) return;
-  var table=wrap.querySelector('table'); if(!table) return;
-  var scaler=document.createElement('div'); scaler.id='fitScaler';
-  wrap.insertBefore(scaler,table); scaler.appendChild(table);
-  function isFit(){return document.body.classList.contains('fit');}
+  var parts=['header','#todayPanel','.status-bar','.table-wrap','.bottom-section'];
+  var pw=document.createElement('div'); pw.id='posterWrap';
+  var hd=document.querySelector('header');
+  if(hd&&hd.parentNode){
+    hd.parentNode.insertBefore(pw,hd);
+    parts.forEach(function(sel){var el=document.querySelector(sel); if(el) pw.appendChild(el);});
+  }
   function applyFit(){
-    if(!isFit()){scaler.style.zoom='';wrap.style.height='';return;}
-    scaler.style.zoom=''; wrap.style.height='';
-    var natW=table.scrollWidth, natH=table.scrollHeight; if(!natW||!natH) return;
-    var availW=wrap.clientWidth, top=wrap.getBoundingClientRect().top;
-    var availH=window.innerHeight-top-8; if(availH<120) availH=120;
-    var k=Math.min(availW/natW, availH/natH, 1); if(!isFinite(k)||k<=0)k=1;
-    scaler.style.zoom=k;
+    if(!pw) return;
+    pw.style.zoom='';
+    var natW=pw.scrollWidth, natH=pw.scrollHeight; if(!natW||!natH) return;
+    var k=Math.min(window.innerWidth/natW, window.innerHeight/natH, 1);
+    if(!isFinite(k)||k<=0) k=1;
+    pw.style.zoom=k;
   }
-  function setMode(on){
-    document.body.classList.toggle('fit',on);
-    document.body.classList.toggle('compact',on);
-    var btn=document.getElementById('cmpBtn');
-    if(btn){btn.classList.toggle('on',on);
-      btn.innerHTML=on?'<span class="cmp-icon">\u229e</span>詳細表示':'<span class="cmp-icon">\u26f6</span>全体表示';}
-    try{localStorage.setItem(KEY,on?'1':'0');}catch(e){}
-    applyFit();
-  }
-  window.toggleCompact=function(){ setMode(true); };
+  window.toggleCompact=function(){ applyFit(); };
   var tb=document.getElementById('tBody');
   if(tb&&window.MutationObserver){ new MutationObserver(function(){requestAnimationFrame(applyFit);}).observe(tb,{childList:true}); }
   window.addEventListener('resize',function(){requestAnimationFrame(applyFit);});
   window.addEventListener('orientationchange',function(){setTimeout(applyFit,300);});
-  document.addEventListener('click',function(e){ if(e.target.closest('.ftab')||e.target.closest('.nav-btn')) setTimeout(applyFit,60); });
-  window.addEventListener('load',function(){setTimeout(applyFit,150);});
+  document.addEventListener('click',function(e){ if(e.target.closest('.ftab')||e.target.closest('.nav-btn')) setTimeout(applyFit,80); });
+  window.addEventListener('load',function(){setTimeout(applyFit,200);});
+  document.body.classList.add('fit');
 
   window.saveImage=async function(){
     if(typeof html2canvas!=='function'){alert('画像ライブラリの読み込み中です。数秒後にもう一度お試しください。');return;}
     var btn=document.getElementById('saveImgBtn'); var label=btn?btn.textContent:'';
     if(btn){btn.disabled=true;btn.textContent='作成中…';}
-    var scalerZ=scaler.style.zoom, wrapH=wrap.style.height;
+    var z=pw.style.zoom; pw.style.zoom='';
     document.body.classList.add('exporting');
-    scaler.style.zoom=''; wrap.style.height='';
-    await new Promise(function(r){setTimeout(r,80);});
+    await new Promise(function(r){setTimeout(r,90);});
     try{
       var bg=getComputedStyle(document.body).backgroundColor||'#f1eee7';
-      var canvas=await html2canvas(document.querySelector('.wrap'),{backgroundColor:bg,scale:2,useCORS:true,logging:false,windowWidth:document.querySelector('.wrap').scrollWidth});
+      var canvas=await html2canvas(pw,{backgroundColor:bg,scale:2,useCORS:true,logging:false,windowWidth:pw.scrollWidth,windowHeight:pw.scrollHeight});
       var a=document.createElement('a');
       a.href=canvas.toDataURL('image/png');
       a.download='お給仕予定_'+((document.getElementById('navLabel')||{}).textContent||'').replace(/[ \/]/g,'')+'.png';
       document.body.appendChild(a); a.click(); a.remove();
     }catch(e){ alert('画像の作成に失敗しました: '+(e&&e.message||e)); }
     document.body.classList.remove('exporting');
-    scaler.style.zoom=scalerZ; wrap.style.height=wrapH;
-    if(isFit()) applyFit();
+    pw.style.zoom=z; applyFit();
     if(btn){btn.disabled=false;btn.textContent=label;}
   };
 
-  setMode(true); // 全体表示のみ
+  applyFit();
 })();
 </script>
 </body>

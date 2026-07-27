@@ -577,6 +577,23 @@ tbody td:first-child{color:#3b3944;border-right:1px solid rgba(170,110,160,.16)}
 .lg-item.lg-Y .lg-logo{filter:none;opacity:.85}
 .cmp-btn{background:rgba(248,246,240,.95);border-color:rgba(200,100,160,.4);color:#a8467e}
 .cmp-btn.on{background:rgba(200,100,160,.14);border-color:rgba(200,100,160,.7);color:#84366a}
+/* 凡例: 色つき店舗名（ポスター調）*/
+.legend{gap:8px;align-items:center;flex-wrap:wrap}
+.legend .lg-item{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:22px;border:1.5px solid;background:#f8f6f0}
+.lg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.lg-logo{height:18px}
+.lg-name{font-size:13px;font-weight:800;white-space:nowrap}
+.legend .lg-item.lg-L{border-color:#7cc3d6;background:rgba(124,195,214,.16)}.lg-item.lg-L .lg-dot{background:#42b0cc}.lg-item.lg-L .lg-name{color:#1f7688}
+.legend .lg-item.lg-M{border-color:#d47bab;background:rgba(212,123,171,.14)}.lg-item.lg-M .lg-dot{background:#d060a0}.lg-item.lg-M .lg-name{color:#a2467d}
+.legend .lg-item.lg-Y{border-color:#b3accd;background:rgba(179,172,205,.18)}.lg-item.lg-Y .lg-dot{background:#a79fc6}.lg-item.lg-Y .lg-name{color:#5c547a}
+/* 全体表示のみ（トグル廃止）＋ 画像保存ボタン位置 */
+#cmpBtn{display:none!important}
+#saveImgBtn{bottom:20px!important}
+/* 画像保存: 表全体が切れないよう幅を解放して撮影 */
+.exporting .wrap{max-width:none!important;width:max-content!important;margin:0!important}
+.exporting header,.exporting .logo-band{width:100%!important}
+
+
 
 /* 今日を縦帯でハイライト */
 .th-date.col-today{box-shadow:inset 2px 0 rgba(220,150,40,.55),inset -2px 0 rgba(220,150,40,.55)}
@@ -599,6 +616,7 @@ body.fit .nav-btn{width:26px;height:26px;font-size:17px}
 body.fit #navLabel{font-size:12px;min-width:108px}
 body.fit .table-wrap{overflow:hidden}
 body.fit #fitScaler{transform-origin:top left}
+body.fit .table-wrap{overflow:visible}
 body.fit .bottom-section{padding:12px 12px 26px;gap:10px}
 body.fit .shift{border-radius:6px;letter-spacing:-.2px}
 
@@ -680,22 +698,13 @@ body.fit .shift{border-radius:6px;letter-spacing:-.2px}
 
 <div class="bottom-section">
   <div class="ev-card">
-    <div class="ev-head">◆ イベント情報</div>
+    <div class="ev-head">🎀 イベント情報</div>
     <ul id="evList"></ul>
   </div>
   <div class="legend">
-    <div class="lg-item lg-L">
-      <img class="lg-logo" src="https://linaria-cafe.com/img/logo-linaria.webp" alt="Linaria"
-           onerror="this.style.display='none';this.insertAdjacentText('afterend','Linaria')">
-    </div>
-    <div class="lg-item lg-M">
-      <img class="lg-logo" src="https://is-melty.jp/img/logo-ismelty.webp" alt="I's Melty"
-           onerror="this.style.display='none';this.insertAdjacentText('afterend',&quot;I's Melty&quot;)">
-    </div>
-    <div class="lg-item lg-Y">
-      <img class="lg-logo" src="https://lily-maid.com/img/logo-lilymaid.webp" alt="Lily Maid"
-           onerror="this.style.display='none';this.insertAdjacentText('afterend','Lily Maid')">
-    </div>
+    <div class="lg-item lg-L"><span class="lg-dot"></span><img class="lg-logo" src="https://linaria-cafe.com/img/logo-linaria.webp" alt="" onerror="this.style.display='none'"><span class="lg-name">Linaria</span></div>
+    <div class="lg-item lg-M"><span class="lg-dot"></span><img class="lg-logo" src="https://is-melty.jp/img/logo-ismelty.webp" alt="" onerror="this.style.display='none'"><span class="lg-name">I's Melty</span></div>
+    <div class="lg-item lg-Y"><span class="lg-dot"></span><img class="lg-logo" src="https://lily-maid.com/img/logo-lilymaid.webp" alt="" onerror="this.style.display='none'"><span class="lg-name">Lily Maid</span></div>
   </div>
 </div>
 
@@ -1235,25 +1244,24 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
   wrap.insertBefore(scaler,table); scaler.appendChild(table);
   function isFit(){return document.body.classList.contains('fit');}
   function applyFit(){
-    if(!isFit()){scaler.style.transform='';wrap.style.height='';return;}
-    scaler.style.transform='none'; wrap.style.height='';
+    if(!isFit()){scaler.style.zoom='';wrap.style.height='';return;}
+    scaler.style.zoom=''; wrap.style.height='';
     var natW=table.scrollWidth, natH=table.scrollHeight; if(!natW||!natH) return;
     var availW=wrap.clientWidth, top=wrap.getBoundingClientRect().top;
     var availH=window.innerHeight-top-8; if(availH<120) availH=120;
     var k=Math.min(availW/natW, availH/natH, 1); if(!isFinite(k)||k<=0)k=1;
-    scaler.style.transform='scale('+k+')';
-    wrap.style.height=Math.ceil(natH*k)+'px';
+    scaler.style.zoom=k;
   }
   function setMode(on){
     document.body.classList.toggle('fit',on);
     document.body.classList.toggle('compact',on);
     var btn=document.getElementById('cmpBtn');
     if(btn){btn.classList.toggle('on',on);
-      btn.innerHTML=on?'<span class="cmp-icon">\u26f6</span>全体表示':'<span class="cmp-icon">\u229e</span>詳細表示';}
+      btn.innerHTML=on?'<span class="cmp-icon">\u229e</span>詳細表示':'<span class="cmp-icon">\u26f6</span>全体表示';}
     try{localStorage.setItem(KEY,on?'1':'0');}catch(e){}
     applyFit();
   }
-  window.toggleCompact=function(){ setMode(!isFit()); };
+  window.toggleCompact=function(){ setMode(true); };
   var tb=document.getElementById('tBody');
   if(tb&&window.MutationObserver){ new MutationObserver(function(){requestAnimationFrame(applyFit);}).observe(tb,{childList:true}); }
   window.addEventListener('resize',function(){requestAnimationFrame(applyFit);});
@@ -1265,9 +1273,9 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
     if(typeof html2canvas!=='function'){alert('画像ライブラリの読み込み中です。数秒後にもう一度お試しください。');return;}
     var btn=document.getElementById('saveImgBtn'); var label=btn?btn.textContent:'';
     if(btn){btn.disabled=true;btn.textContent='作成中…';}
-    var scalerT=scaler.style.transform, wrapH=wrap.style.height;
+    var scalerZ=scaler.style.zoom, wrapH=wrap.style.height;
     document.body.classList.add('exporting');
-    scaler.style.transform='none'; wrap.style.height='';
+    scaler.style.zoom=''; wrap.style.height='';
     await new Promise(function(r){setTimeout(r,80);});
     try{
       var bg=getComputedStyle(document.body).backgroundColor||'#f1eee7';
@@ -1278,13 +1286,12 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       document.body.appendChild(a); a.click(); a.remove();
     }catch(e){ alert('画像の作成に失敗しました: '+(e&&e.message||e)); }
     document.body.classList.remove('exporting');
-    scaler.style.transform=scalerT; wrap.style.height=wrapH;
+    scaler.style.zoom=scalerZ; wrap.style.height=wrapH;
     if(isFit()) applyFit();
     if(btn){btn.disabled=false;btn.textContent=label;}
   };
 
-  var saved=null; try{saved=localStorage.getItem(KEY);}catch(e){}
-  setMode(saved===null?true:saved==='1');
+  setMode(true); // 全体表示のみ
 })();
 </script>
 </body>

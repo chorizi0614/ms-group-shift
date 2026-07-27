@@ -586,6 +586,34 @@ tbody td:first-child{color:#3b3944;border-right:1px solid rgba(170,110,160,.16)}
 .legend .lg-item.lg-L{border-color:#7cc3d6;background:rgba(124,195,214,.16)}.lg-item.lg-L .lg-dot{background:#42b0cc}.lg-item.lg-L .lg-name{color:#1f7688}
 .legend .lg-item.lg-M{border-color:#d47bab;background:rgba(212,123,171,.14)}.lg-item.lg-M .lg-dot{background:#d060a0}.lg-item.lg-M .lg-name{color:#a2467d}
 .legend .lg-item.lg-Y{border-color:#b3accd;background:rgba(179,172,205,.18)}.lg-item.lg-Y .lg-dot{background:#a79fc6}.lg-item.lg-Y .lg-name{color:#5c547a}
+/* イベント告知をコンパクトに（ポスター参考・グリッドを大きく）*/
+.bottom-section{padding:10px 12px 16px;gap:10px}
+.ev-card{padding:9px 12px;border-radius:12px}
+.ev-head{font-size:12px;margin-bottom:5px;letter-spacing:1px}
+#evList{gap:2px}
+#evList li{font-size:11px;line-height:1.5}
+.ev-date{font-size:10px}
+.legend .lg-item{padding:5px 11px}
+.lg-name{font-size:12px}
+.lg-logo{height:16px}
+@media(min-width:520px){ #evList{display:grid;grid-template-columns:1fr 1fr;column-gap:14px} }
+
+/* キャストの横一列ハイライト */
+#tBody tr.rowlit td{background:rgba(255,224,140,.30)!important}
+#tBody tr.rowlit td:first-child{background:rgba(255,210,90,.42)!important}
+#tBody tr.rowlit td:first-child .c-name{color:#8a5a00;font-weight:900}
+#tBody tr.rowlit .shift{box-shadow:0 0 0 2px rgba(240,170,30,.95),0 0 7px rgba(240,170,30,.55);filter:saturate(1.1)}
+#tBody tr td{cursor:pointer}
+
+/* アプリ内ブラウザ案内バナー */
+#extBanner{position:fixed;top:0;left:0;right:0;z-index:99999;display:none;align-items:center;gap:8px;
+  background:linear-gradient(90deg,#fff3d0,#ffe9c2);color:#5a3a10;font-size:12px;font-weight:800;line-height:1.4;
+  padding:calc(9px + env(safe-area-inset-top)) 12px 9px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+#extBanner.show{display:flex}
+#extBanner .eb-txt{flex:1}
+#extBanner .eb-open{background:#e0245e;color:#fff;border:none;border-radius:16px;padding:7px 13px;font-size:12px;font-weight:900;white-space:nowrap;cursor:pointer}
+#extBanner .eb-x{font-size:16px;font-weight:900;opacity:.6;cursor:pointer;padding:0 3px}
+
 /* 全体表示のみ（トグル廃止）＋ 画像保存ボタン位置 */
 #cmpBtn{display:none!important}
 #saveImgBtn{bottom:20px!important}
@@ -1267,6 +1295,43 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
   };
 
   applyFit();
+})();
+</script>
+<script>
+(function(){
+  /* キャストの名前/行タップで横一列を光らせる（XリンクはtargetのままなのでXにも飛ぶ）*/
+  function bindRowLit(){
+    var tb=document.getElementById('tBody'); if(!tb||tb._lit) return; tb._lit=1;
+    tb.addEventListener('click',function(e){
+      var tr=e.target.closest('tr'); if(!tr||tr.classList.contains('rh'))return;
+      var on=tr.classList.contains('rowlit');
+      tb.querySelectorAll('tr.rowlit').forEach(function(x){x.classList.remove('rowlit');});
+      if(!on) tr.classList.add('rowlit');
+    },true);
+  }
+  bindRowLit();
+  var tb0=document.getElementById('tBody');
+  if(tb0&&window.MutationObserver){ new MutationObserver(bindRowLit).observe(tb0,{childList:true}); }
+
+  /* アプリ内ブラウザ（X/Instagram/LINE/FB等）の時は「ブラウザで開く」案内 */
+  try{
+    var ua=navigator.userAgent||'';
+    var inApp=/Twitter|TwitterAndroid|FBAN|FBAV|FB_IAB|Instagram|Line\//i.test(ua)
+      || (/(iPhone|iPod|iPad|Android)/i.test(ua) && !/(Safari|CriOS|Chrome|FxiOS|EdgiOS)/i.test(ua));
+    if(inApp && localStorage.getItem('msExtBannerHide')!=='1'){
+      var b=document.createElement('div'); b.id='extBanner';
+      b.innerHTML='<span class="eb-txt">📱 ブラウザ（Safari / Chrome）で開くと見やすいよ！右上のメニュー［•••］→「ブラウザで開く」</span>'
+        +'<button class="eb-open">開く</button><span class="eb-x">✕</span>';
+      document.body.appendChild(b);
+      requestAnimationFrame(function(){ b.classList.add('show'); document.body.style.paddingTop=b.offsetHeight+'px'; if(typeof applyFit==='function')applyFit(); });
+      b.querySelector('.eb-open').onclick=function(){
+        try{ navigator.clipboard && navigator.clipboard.writeText(location.href); }catch(e){}
+        window.open(location.href,'_blank');
+        alert('URLをコピーしました。Safari / Chrome に貼り付けて開くと見やすいです。\n（右上メニューの「ブラウザで開く」でもOK）');
+      };
+      b.querySelector('.eb-x').onclick=function(){ b.classList.remove('show'); document.body.style.paddingTop=''; try{localStorage.setItem('msExtBannerHide','1');}catch(e){} if(typeof applyFit==='function')applyFit(); };
+    }
+  }catch(e){}
 })();
 </script>
 </body>

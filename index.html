@@ -2,7 +2,13 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="お給仕予定">
+<meta name="theme-color" content="#f1eee7">
+<link rel="apple-touch-icon" href="ms-logo.png">
 <title>お給仕予定 | MS Group</title>
 <!-- OGP -->
 <meta property="og:type" content="website">
@@ -492,6 +498,118 @@ body.compact .shift{font-size:7.5px;padding:2px 3px;min-width:22px;border-radius
   .legend{flex:1;justify-content:flex-end}
 }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>window.HOL={"2026-01-01":"元日","2026-01-12":"成人の日","2026-02-11":"建国記念の日","2026-02-23":"天皇誕生日","2026-03-20":"春分の日","2026-04-29":"昭和の日","2026-05-03":"憲法記念日","2026-05-04":"みどりの日","2026-05-05":"こどもの日","2026-05-06":"振替休日","2026-07-20":"海の日","2026-08-11":"山の日","2026-09-21":"敬老の日","2026-09-22":"国民の休日","2026-09-23":"秋分の日","2026-10-12":"スポーツの日","2026-11-03":"文化の日","2026-11-23":"勤労感謝の日","2027-01-01":"元日","2027-01-11":"成人の日","2027-02-11":"建国記念の日","2027-02-23":"天皇誕生日"};</script>
+
+<style>
+/* ===== 目にやさしい ライトテーマ（上書き）===== */
+:root{
+  --page:#f1eee7; --surface:#f8f6f0; --surface2:#efe9f0;
+  --border:rgba(90,80,110,.16); --border-pink:rgba(170,110,160,.22);
+  --text:#3b3944; --muted:#877f95;
+  --today-bg:rgba(240,180,80,.26); --sat-bg:rgba(70,150,200,.10);
+  --sun-bg:rgba(210,90,90,.10); --fri-bg:rgba(110,165,70,.10);
+}
+body{background:var(--page);color:var(--text)}
+header{background:var(--page)}
+.logo-band{background:linear-gradient(160deg,#e7e0f0 0%,#f1ebf1 55%,#e6eef4 100%);border-bottom:1px solid var(--border-pink);padding-top:calc(10px + env(safe-area-inset-top))}
+.logo-band::before{background:linear-gradient(90deg,transparent,rgba(170,100,150,.4),transparent)}
+.header-title{color:#6f5a8a}
+.header-period{color:#8a6aa2}
+.ms-logo{background:#faf9f4}
+.ms-logo-fallback{color:#5b4a78}
+.filter-row{background:#ece5f0;border-bottom:1px solid var(--border-pink)}
+.ftab{background:#f8f6f0;color:#847a94;border-color:rgba(90,80,110,.20)}
+.ftab.is-all.active{background:#e4dbf0;border-color:#9d84c2;color:#5b4a78}
+.ftab.is-L{border-color:rgba(70,160,190,.3);color:#2b8299}
+.ftab.is-L.active{background:rgba(70,160,190,.12);border-color:#3ea3c0;color:#1f7688}
+.ftab.is-M{border-color:rgba(200,90,150,.3);color:#b24d88}
+.ftab.is-M.active{background:rgba(200,90,150,.10);border-color:#cf6ea6;color:#a2467d}
+.ftab.is-Y{border-color:rgba(140,130,170,.35);color:#6e6688}
+.ftab.is-Y .ftab-logo{filter:none;opacity:.7}
+.ftab.is-Y.active{background:rgba(140,130,170,.14);border-color:#948bbd;color:#5c547a}
+.ftab.is-Y.active .ftab-logo{filter:none;opacity:1}
+.nav-row{background:#ede7f1;border-bottom:1px solid rgba(170,100,150,.12)}
+.nav-btn{border-color:rgba(200,100,160,.3);background:rgba(200,100,160,.06);color:#a8467e}
+#navLabel{color:#5b4a78}
+.today-panel{background:linear-gradient(180deg,rgba(200,100,160,.07),transparent);border-bottom:1px solid rgba(200,100,160,.14)}
+.today-head{color:#b24d88}
+.tc{background:#f2ecf3}
+.tc-name,.tc-name a{color:#3b3944}
+.tc-time{color:#877f95}
+.status-bar{background:#f8f6f0;border-bottom:1px solid var(--border)}
+#stxt,#supdated{color:#877f95}
+.table-wrap{background:#f8f6f0}
+table,#stickyDates table{background:#f8f6f0}
+thead th{border-bottom:1px solid var(--border)}
+thead th:first-child,tbody td:first-child{background:#f8f6f0}
+#dRow th:first-child,#wRow th:first-child{background:#f8f6f0;border-right:1px solid rgba(170,110,160,.2);color:#877f95}
+#stickyDates,#stickyDates thead th:first-child{background:#f8f6f0!important;border-bottom:1px solid var(--border)}
+.th-d{color:#57516a}
+.th-w{color:#948caa}
+.col-sun .th-d,.col-sun .th-w{color:#cc5a5a}
+.col-sat .th-d,.col-sat .th-w{color:#2f7fbf}
+.col-fri .th-d,.col-fri .th-w{color:#5c9a3a}
+.col-today .th-d{color:#2a2436}
+.col-today .th-d>span{background:rgba(240,180,80,.42);border-color:rgba(210,150,50,.65)}
+.col-event .th-d{color:#c88a10}
+.col-event .th-d>.ev-badge::after{background:#d6a020;box-shadow:0 0 4px rgba(200,150,20,.5)}
+.ev-label{color:#b24d88}
+.wk-sep{border-left:2px solid rgba(140,100,200,.28)!important}
+tbody tr{border-bottom:1px solid rgba(90,80,110,.10)}
+tbody td:first-child{color:#3b3944;border-right:1px solid rgba(170,110,160,.16)}
+.c-photo{border-color:rgba(200,100,160,.35)}
+.c-nophoto{background:rgba(90,80,110,.10);color:#6e6688;border-color:rgba(90,80,110,.2)}
+.c-name a{color:#3b3944}.c-name a::after{opacity:.3}
+/* シフト札＝彩度を抑えた店舗色ベタ＋濃い文字 */
+.shift{border:none;font-weight:800}
+.shift-L{background:#7cc3d6;color:#0b3541}
+.shift-M{background:#d47bab;color:#3a0f2c}
+.shift-Y{background:#b3accd;color:#2f2b40}
+.shift.dm{opacity:.16}
+.bottom-section{background:#f4f0f5;border-top:1px solid rgba(200,100,160,.14)}
+.ev-card{background:#f8f6f0;border:1px solid rgba(200,100,160,.16)}
+.ev-head{color:#9a56bc}
+#evList li{color:#3b3944}
+.ev-date{color:#b24d88}
+.legend .lg-item{background:#f8f6f0;border-color:rgba(90,80,110,.14)}
+.lg-item.lg-Y .lg-logo{filter:none;opacity:.85}
+.cmp-btn{background:rgba(248,246,240,.95);border-color:rgba(200,100,160,.4);color:#a8467e}
+.cmp-btn.on{background:rgba(200,100,160,.14);border-color:rgba(200,100,160,.7);color:#84366a}
+
+/* 今日を縦帯でハイライト */
+.th-date.col-today{box-shadow:inset 2px 0 rgba(220,150,40,.55),inset -2px 0 rgba(220,150,40,.55)}
+tbody td.cd-today{background:var(--today-bg);box-shadow:inset 2px 0 rgba(220,150,40,.32),inset -2px 0 rgba(220,150,40,.32)}
+
+/* ===== 1画面フィット ===== */
+body.fit .today-panel{display:none!important}
+body.fit .status-bar{display:none!important}
+body.fit #stickyDates{display:none!important}
+body.fit .logo-band{padding:calc(5px + env(safe-area-inset-top)) 12px 4px}
+body.fit .ms-logo{height:30px;margin-bottom:1px}
+body.fit .header-title{font-size:11px;letter-spacing:3px}
+body.fit .header-period{font-size:9px;margin-top:2px}
+body.fit .filter-row{padding:4px 8px;gap:4px}
+body.fit .ftab{min-height:30px;font-size:9px;padding:3px;border-radius:16px}
+body.fit .ftab-logo{height:13px;max-width:44px}
+body.fit .ftab-name{font-size:7.5px}
+body.fit .nav-row{padding:3px 10px;gap:12px}
+body.fit .nav-btn{width:26px;height:26px;font-size:17px}
+body.fit #navLabel{font-size:12px;min-width:108px}
+body.fit .table-wrap{overflow:hidden}
+body.fit #fitScaler{transform-origin:top left}
+body.fit .bottom-section{padding:12px 12px 26px;gap:10px}
+body.fit .shift{border-radius:6px;letter-spacing:-.2px}
+
+/* ===== 画像保存(撮影)用: 写真/ロゴ/装飾を隠しクロスオリジン回避 ===== */
+.exporting .today-panel,.exporting .status-bar,.exporting #stickyDates,.exporting .cmp-btn,.exporting #saveImgBtn,.exporting .legend,.exporting #tapHint{display:none!important}
+.exporting .c-photo,.exporting .ftab-logo,.exporting .ms-logo{display:none!important}
+.exporting .ms-logo-fallback{display:block!important}
+.exporting .table-wrap{overflow:visible!important;height:auto!important}
+.exporting #fitScaler{transform:none!important}
+.exporting .c-name{font-size:12px}
+</style>
 </head>
 <body class="compact">
 
@@ -555,6 +673,7 @@ body.compact .shift{font-size:7.5px;padding:2px 3px;min-width:22px;border-radius
   </table>
 </div>
 
+<button class="cmp-btn" id="saveImgBtn" onclick="saveImage()" style="bottom:64px">📷 画像保存</button>
 <button class="cmp-btn on" id="cmpBtn" onclick="toggleCompact()">
   <span class="cmp-icon">⊟</span>通常表示
 </button>
@@ -817,7 +936,8 @@ function render(period, allRows){
     const w=new Date(y,m-1,d).getDay();
     const isT=d===todayD, isMon=w===1;
     const isEv=!isT&&evDayMap.has(d);
-    const col=isT?' col-today':isEv?' col-event':w===0?' col-sun':w===6?' col-sat':w===5?' col-fri':'';
+    const hol=window.HOL&&window.HOL[y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')];
+    const col=isT?' col-today':isEv?' col-event':(hol||w===0)?' col-sun':w===6?' col-sat':w===5?' col-fri':'';
     const sep=(isMon&&d>startDay)?' wk-sep':'';
     const th1=document.createElement('th');
     th1.className='th-date'+col+sep;
@@ -850,6 +970,7 @@ function render(period, allRows){
     if(!meta[name]) meta[name]={photo:photo||'',xid:xid||''};
   });
 
+  order.sort((a,b)=>a.localeCompare(b,'ja'));
   order.forEach(name=>{
     const shifts=map.get(name);
     const stores=[...new Set(shifts.map(s=>s.store))];
@@ -875,8 +996,9 @@ function render(period, allRows){
     for(let d=startDay;d<=endDay;d++){
       const w=new Date(y,m-1,d).getDay();
       const isT=d===todayD, isMon=w===1;
+      const hol=window.HOL&&window.HOL[y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')];
       const td=document.createElement('td');
-      const rc=isT?'cd-today':w===5?'cd-fri':w===0?'cd-sun':w===6?'cd-sat':'';
+      const rc=isT?'cd-today':(hol||w===0)?'cd-sun':w===5?'cd-fri':w===6?'cd-sat':'';
       if(rc) td.className=rc;
       if(isMon&&d>startDay) td.classList.add('wk-sep');
       if(dayMap[d]){
@@ -1101,6 +1223,68 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       setTimeout(()=>{built=false;widthsSynced=false;attachTW();update();},450);
     }
   });
+})();
+</script>
+
+<script>
+(function(){
+  var KEY='msShiftFitMode';
+  var wrap=document.querySelector('.table-wrap'); if(!wrap) return;
+  var table=wrap.querySelector('table'); if(!table) return;
+  var scaler=document.createElement('div'); scaler.id='fitScaler';
+  wrap.insertBefore(scaler,table); scaler.appendChild(table);
+  function isFit(){return document.body.classList.contains('fit');}
+  function applyFit(){
+    if(!isFit()){scaler.style.transform='';wrap.style.height='';return;}
+    scaler.style.transform='none'; wrap.style.height='';
+    var natW=table.scrollWidth, natH=table.scrollHeight; if(!natW||!natH) return;
+    var availW=wrap.clientWidth, top=wrap.getBoundingClientRect().top;
+    var availH=window.innerHeight-top-8; if(availH<120) availH=120;
+    var k=Math.min(availW/natW, availH/natH, 1); if(!isFinite(k)||k<=0)k=1;
+    scaler.style.transform='scale('+k+')';
+    wrap.style.height=Math.ceil(natH*k)+'px';
+  }
+  function setMode(on){
+    document.body.classList.toggle('fit',on);
+    document.body.classList.toggle('compact',on);
+    var btn=document.getElementById('cmpBtn');
+    if(btn){btn.classList.toggle('on',on);
+      btn.innerHTML=on?'<span class="cmp-icon">\u26f6</span>全体表示':'<span class="cmp-icon">\u229e</span>詳細表示';}
+    try{localStorage.setItem(KEY,on?'1':'0');}catch(e){}
+    applyFit();
+  }
+  window.toggleCompact=function(){ setMode(!isFit()); };
+  var tb=document.getElementById('tBody');
+  if(tb&&window.MutationObserver){ new MutationObserver(function(){requestAnimationFrame(applyFit);}).observe(tb,{childList:true}); }
+  window.addEventListener('resize',function(){requestAnimationFrame(applyFit);});
+  window.addEventListener('orientationchange',function(){setTimeout(applyFit,300);});
+  document.addEventListener('click',function(e){ if(e.target.closest('.ftab')||e.target.closest('.nav-btn')) setTimeout(applyFit,60); });
+  window.addEventListener('load',function(){setTimeout(applyFit,150);});
+
+  window.saveImage=async function(){
+    if(typeof html2canvas!=='function'){alert('画像ライブラリの読み込み中です。数秒後にもう一度お試しください。');return;}
+    var btn=document.getElementById('saveImgBtn'); var label=btn?btn.textContent:'';
+    if(btn){btn.disabled=true;btn.textContent='作成中…';}
+    var scalerT=scaler.style.transform, wrapH=wrap.style.height;
+    document.body.classList.add('exporting');
+    scaler.style.transform='none'; wrap.style.height='';
+    await new Promise(function(r){setTimeout(r,80);});
+    try{
+      var bg=getComputedStyle(document.body).backgroundColor||'#f1eee7';
+      var canvas=await html2canvas(document.querySelector('.wrap'),{backgroundColor:bg,scale:2,useCORS:true,logging:false,windowWidth:document.querySelector('.wrap').scrollWidth});
+      var a=document.createElement('a');
+      a.href=canvas.toDataURL('image/png');
+      a.download='お給仕予定_'+((document.getElementById('navLabel')||{}).textContent||'').replace(/[ \/]/g,'')+'.png';
+      document.body.appendChild(a); a.click(); a.remove();
+    }catch(e){ alert('画像の作成に失敗しました: '+(e&&e.message||e)); }
+    document.body.classList.remove('exporting');
+    scaler.style.transform=scalerT; wrap.style.height=wrapH;
+    if(isFit()) applyFit();
+    if(btn){btn.disabled=false;btn.textContent=label;}
+  };
+
+  var saved=null; try{saved=localStorage.getItem(KEY);}catch(e){}
+  setMode(saved===null?true:saved==='1');
 })();
 </script>
 </body>

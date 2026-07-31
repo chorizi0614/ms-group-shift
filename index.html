@@ -605,9 +605,13 @@ tbody td:first-child{color:#3b3944;border-right:1px solid rgba(170,110,160,.16)}
 #tBody tr td{cursor:pointer}
 
 /* アプリ内ブラウザ案内バナー */
-#extBanner{position:fixed;top:0;left:0;right:0;z-index:99999;display:none;align-items:center;gap:8px;
-  background:linear-gradient(90deg,#fff3d0,#ffe9c2);color:#5a3a10;font-size:12px;font-weight:800;line-height:1.4;
-  padding:calc(9px + env(safe-area-inset-top)) 12px 9px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+#extBanner{position:fixed;top:0;left:0;right:0;z-index:99999;display:none;align-items:center;gap:6px;
+  background:linear-gradient(90deg,#fff3d0,#ffe9c2);color:#5a3a10;font-size:10.5px;font-weight:800;line-height:1.25;
+  padding:calc(4px + env(safe-area-inset-top)) 8px 4px;box-shadow:0 2px 8px rgba(0,0,0,.16);
+  transition:transform .35s ease}
+#extBanner.hide{transform:translateY(-110%)}
+#extBanner .eb-txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#extBanner .eb-open{padding:4px 10px;font-size:11px}
 #extBanner.show{display:flex}
 #extBanner .eb-txt{flex:1}
 #extBanner .eb-open{background:#e0245e;color:#fff;border:none;border-radius:16px;padding:7px 13px;font-size:12px;font-weight:900;white-space:nowrap;cursor:pointer}
@@ -629,6 +633,8 @@ tbody td.cd-today{background:var(--today-bg);box-shadow:inset 2px 0 rgba(220,150
 html,body{overflow-y:hidden}                      /* 縦スクロールなし */
 .wrapfit{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
 .table-wrap{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;flex:0 0 auto}
+body.inapp{padding-bottom:92px}
+body.inapp .cmp-btn,body.inapp #saveImgBtn{bottom:104px!important}
 /* 名前列（見切れないよう固定幅・左固定） */
 tbody td:first-child{min-width:var(--nameW)!important;max-width:var(--nameW)!important;padding:0 4px 0 7px;height:var(--rowH)}
 #dRow th:first-child,#wRow th:first-child{min-width:var(--nameW)!important;max-width:var(--nameW)!important}
@@ -1312,18 +1318,23 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
     var ua=navigator.userAgent||'';
     var inApp=/Twitter|TwitterAndroid|FBAN|FBAV|FB_IAB|Instagram|Line\//i.test(ua)
       || (/(iPhone|iPod|iPad|Android)/i.test(ua) && !/(Safari|CriOS|Chrome|FxiOS|EdgiOS)/i.test(ua));
+    if(inApp){ document.body.classList.add('inapp'); if(typeof applyFit==='function')applyFit(); }
     if(inApp && localStorage.getItem('msExtBannerHide')!=='1'){
       var b=document.createElement('div'); b.id='extBanner';
-      b.innerHTML='<span class="eb-txt">📱 ブラウザ（Safari / Chrome）で開くと見やすいよ！右上のメニュー［•••］→「ブラウザで開く」</span>'
+      b.innerHTML='<span class="eb-txt">📱 ブラウザで開くともっと見やすいよ（右上［•••］→ブラウザで開く）</span>'
         +'<button class="eb-open">開く</button><span class="eb-x">✕</span>';
       document.body.appendChild(b);
-      requestAnimationFrame(function(){ b.classList.add('show'); document.body.style.paddingTop=b.offsetHeight+'px'; if(typeof applyFit==='function')applyFit(); });
+      requestAnimationFrame(function(){
+        b.classList.add('show'); document.body.style.paddingTop=b.offsetHeight+'px';
+        if(window.__fitShift)window.__fitShift();
+      });
+      setTimeout(function(){ b.classList.add('hide'); document.body.style.paddingTop=''; if(window.__fitShift)window.__fitShift(); },8000);
       b.querySelector('.eb-open').onclick=function(){
         try{ navigator.clipboard && navigator.clipboard.writeText(location.href); }catch(e){}
         window.open(location.href,'_blank');
         alert('URLをコピーしました。Safari / Chrome に貼り付けて開くと見やすいです。\n（右上メニューの「ブラウザで開く」でもOK）');
       };
-      b.querySelector('.eb-x').onclick=function(){ b.classList.remove('show'); document.body.style.paddingTop=''; try{localStorage.setItem('msExtBannerHide','1');}catch(e){} if(typeof applyFit==='function')applyFit(); };
+      b.querySelector('.eb-x').onclick=function(){ b.classList.remove('show'); document.body.style.paddingTop=''; try{localStorage.setItem('msExtBannerHide','1');}catch(e){} if(window.__fitShift)window.__fitShift(); };
     }
   }catch(e){}
 })();
@@ -1513,18 +1524,20 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
     var headH=e.thead?e.thead.offsetHeight:30;
     var bsH=e.bs?e.bs.offsetHeight:0;
     var hintH=e.hint?e.hint.offsetHeight:0;
-    var rh=Math.floor((window.innerHeight-e.hd.offsetHeight-hintH-bsH-headH-6)/rows);
+    var VH=(window.visualViewport&&window.visualViewport.height)?window.visualViewport.height:window.innerHeight;
+    var RES=document.body.classList.contains('inapp')?96:6;   // X等の下部バー分を確保
+    var rh=Math.floor((VH-e.hd.offsetHeight-hintH-bsH-headH-RES)/rows);
     rh=Math.max(15,Math.min(34,isFinite(rh)?rh:26));
     apply(rh);
     /* 実際の高さを見て、収まるまで1pxずつ詰める（最大18回） */
     for(var i=0;i<18;i++){
-      if(document.documentElement.scrollHeight<=window.innerHeight) break;
+      if(document.documentElement.scrollHeight<=VH-RES+6) break;
       if(rh<=15) break;
       rh--; apply(rh);
     }
     /* それでも溢れる時はイベント欄を縮める */
-    if(e.bs && document.documentElement.scrollHeight>window.innerHeight){
-      var over=document.documentElement.scrollHeight-window.innerHeight;
+    if(e.bs && document.documentElement.scrollHeight>VH-RES+6){
+      var over=document.documentElement.scrollHeight-(VH-RES);
       e.bs.style.maxHeight=Math.max(40,e.bs.offsetHeight-over-4)+'px';
       e.bs.style.overflow='hidden';
     } else if(e.bs){ e.bs.style.maxHeight=''; }
@@ -1533,10 +1546,11 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
   var tb=document.getElementById('tBody');
   if(tb&&window.MutationObserver){ new MutationObserver(function(){requestAnimationFrame(fit);}).observe(tb,{childList:true}); }
   window.addEventListener('resize',function(){requestAnimationFrame(fit);});
+  if(window.visualViewport){ window.visualViewport.addEventListener('resize',function(){requestAnimationFrame(fit);}); }
   window.addEventListener('orientationchange',function(){setTimeout(fit,300);});
   document.addEventListener('click',function(e){ if(e.target.closest('.ftab')||e.target.closest('.nav-btn')) setTimeout(fit,80); });
   window.addEventListener('load',function(){setTimeout(fit,150);});
-  setTimeout(fit,120);
+  setTimeout(fit,120); setTimeout(fit,900); setTimeout(fit,2000);
 })();
 </script>
 </body>

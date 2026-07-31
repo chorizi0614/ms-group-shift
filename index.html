@@ -683,6 +683,18 @@ tbody td{text-align:center;vertical-align:middle;position:relative}
   padding:3px 8px;font-size:9.5px;font-weight:700;color:#8a5aa8;line-height:1.3}
 .hintbar b{color:#b24d88}
 .hintbar span{white-space:nowrap}
+/* Xを開く前の確認ポップアップ */
+#xConfirm{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:rgba(40,30,55,.45);padding:22px}
+#xConfirm.on{display:flex}
+#xConfirm .xc{background:#fbf9f4;border-radius:16px;max-width:320px;width:100%;padding:20px 18px 16px;text-align:center;box-shadow:0 10px 30px rgba(60,40,90,.3)}
+#xConfirm .xc-ttl{font-size:15px;font-weight:900;color:#3b3944;line-height:1.6}
+#xConfirm .xc-ttl b{color:#b24d88}
+#xConfirm .xc-sub{font-size:11.5px;font-weight:700;color:#877f95;margin-top:6px}
+#xConfirm .xc-btns{display:flex;gap:9px;margin-top:15px}
+#xConfirm button{flex:1;border:0;border-radius:11px;padding:11px 6px;font-size:13px;font-weight:900;cursor:pointer}
+#xConfirm .xc-no{background:#ece7f0;color:#6b6380}
+#xConfirm .xc-go{background:#111;color:#fff}
+
 </style>
 </head>
 <body>
@@ -1321,14 +1333,13 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
     if(inApp){ document.body.classList.add('inapp'); if(typeof applyFit==='function')applyFit(); }
     if(inApp && localStorage.getItem('msExtBannerHide')!=='1'){
       var b=document.createElement('div'); b.id='extBanner';
-      b.innerHTML='<span class="eb-txt">📱 ブラウザで開くともっと見やすいよ（右上［•••］→ブラウザで開く）</span>'
+      b.innerHTML='<span class="eb-txt">📱 <b>ブラウザ（Safari / Chrome）で開くことを推奨しています</b>（右上［•••］→「ブラウザで開く」）</span>'
         +'<button class="eb-open">開く</button><span class="eb-x">✕</span>';
       document.body.appendChild(b);
       requestAnimationFrame(function(){
         b.classList.add('show'); document.body.style.paddingTop=b.offsetHeight+'px';
         if(window.__fitShift)window.__fitShift();
       });
-      setTimeout(function(){ b.classList.add('hide'); document.body.style.paddingTop=''; if(window.__fitShift)window.__fitShift(); },8000);
       b.querySelector('.eb-open').onclick=function(){
         try{ navigator.clipboard && navigator.clipboard.writeText(location.href); }catch(e){}
         window.open(location.href,'_blank');
@@ -1551,6 +1562,33 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
   document.addEventListener('click',function(e){ if(e.target.closest('.ftab')||e.target.closest('.nav-btn')) setTimeout(fit,80); });
   window.addEventListener('load',function(){setTimeout(fit,150);});
   setTimeout(fit,120); setTimeout(fit,900); setTimeout(fit,2000);
+})();
+</script>
+
+<script>
+/* Xへ移動する前に確認する */
+(function(){
+  var box=document.createElement('div'); box.id='xConfirm';
+  box.innerHTML='<div class="xc"><div class="xc-ttl" id="xcTtl"></div>'
+    +'<div class="xc-sub">X（旧Twitter）のページが新しいタブで開きます</div>'
+    +'<div class="xc-btns"><button class="xc-no" id="xcNo">キャンセル</button>'
+    +'<button class="xc-go" id="xcGo">𝕏 開く</button></div></div>';
+  document.body.appendChild(box);
+  var url='';
+  function close(){ box.classList.remove('on'); url=''; }
+  box.addEventListener('click',function(e){ if(e.target===box) close(); });
+  document.getElementById('xcNo').onclick=close;
+  document.getElementById('xcGo').onclick=function(){ var u=url; close(); if(u) window.open(u,'_blank','noopener'); };
+  /* キャスト名のXリンクを横取りして確認を出す */
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href*="x.com/"], a[href*="twitter.com/"]');
+    if(!a) return;
+    e.preventDefault(); e.stopPropagation();
+    url=a.href;
+    var nm=(a.textContent||'').trim()||'このキャスト';
+    document.getElementById('xcTtl').innerHTML='<b>'+nm+'</b> さんの<br>X アカウントに飛びますか？';
+    box.classList.add('on');
+  },true);
 })();
 </script>
 </body>

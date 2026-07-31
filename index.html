@@ -645,10 +645,11 @@ body.tiny .c-photo,body.tiny .c-nophoto{display:none}
 tbody td{height:var(--rowH);padding:0;line-height:1}
 tbody tr{line-height:1}
 .cast-cell{line-height:1}
-.shift{font-size:var(--chip);padding:0 3px;min-width:26px;border-radius:7px;letter-spacing:-.3px;font-weight:800;
-  display:inline-flex;align-items:center;justify-content:center;line-height:1;
-  height:calc(var(--rowH) - 6px);vertical-align:middle}
-tbody td{text-align:center;vertical-align:middle}
+/* セルの中央に完全固定（絶対配置でズレゼロ） */
+tbody td{text-align:center;vertical-align:middle;position:relative}
+.shift{font-size:var(--chip);padding:2px 4px;min-width:26px;border-radius:7px;letter-spacing:-.3px;font-weight:800;
+  display:inline-flex;align-items:center;justify-content:center;line-height:1;white-space:nowrap;
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 /* 下部（イベント・凡例）をコンパクトに */
 .bottom-section{flex:1 1 auto;min-height:0;overflow:hidden;padding:7px 10px 8px;gap:7px;flex-direction:row;flex-wrap:wrap}
 .ev-card{flex:1 1 60%;min-width:200px;padding:6px 9px;overflow:hidden}

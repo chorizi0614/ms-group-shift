@@ -499,7 +499,6 @@ body.compact .shift{font-size:7.5px;padding:2px 3px;min-width:22px;border-radius
 }
 </style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>window.HOL={"2026-01-01":"元日","2026-01-12":"成人の日","2026-02-11":"建国記念の日","2026-02-23":"天皇誕生日","2026-03-20":"春分の日","2026-04-29":"昭和の日","2026-05-03":"憲法記念日","2026-05-04":"みどりの日","2026-05-05":"こどもの日","2026-05-06":"振替休日","2026-07-20":"海の日","2026-08-11":"山の日","2026-09-21":"敬老の日","2026-09-22":"国民の休日","2026-09-23":"秋分の日","2026-10-12":"スポーツの日","2026-11-03":"文化の日","2026-11-23":"勤労感謝の日","2027-01-01":"元日","2027-01-11":"成人の日","2027-02-11":"建国記念の日","2027-02-23":"天皇誕生日"};</script>
 
 <style>
@@ -625,24 +624,27 @@ tbody td:first-child{color:#3b3944;border-right:1px solid rgba(170,110,160,.16)}
 .th-date.col-today{box-shadow:inset 2px 0 rgba(220,150,40,.55),inset -2px 0 rgba(220,150,40,.55)}
 tbody td.cd-today{background:var(--today-bg);box-shadow:inset 2px 0 rgba(220,150,40,.32),inset -2px 0 rgba(220,150,40,.32)}
 
-/* ===== 1画面フィット ===== */
-body.fit .today-panel{display:none!important}
-body.fit .status-bar{display:none!important}
-body.fit #stickyDates{display:none!important}
-body.fit .logo-band{padding-top:calc(6px + env(safe-area-inset-top))}
-body.fit .table-wrap{overflow:visible}
-#posterWrap{width:max-content;margin:0 auto}
-body.fit .shift{border-radius:6px;letter-spacing:-.2px}
-
-/* ===== 画像保存(撮影)用: 写真/ロゴ/装飾を隠しクロスオリジン回避 ===== */
-.exporting .today-panel,.exporting .status-bar,.exporting #stickyDates,.exporting .cmp-btn,.exporting #saveImgBtn,.exporting #tapHint{display:none!important}
-.exporting .c-photo,.exporting .tc-photo,.exporting .ftab-logo,.exporting .lg-logo{display:none!important}
-.exporting .ms-logo-fallback{display:block!important}
-.exporting .table-wrap{overflow:visible!important;height:auto!important}
-.exporting .c-name{font-size:12px}
+/* ===== 横スクロール前提の見やすいレイアウト（2026-07-31） ===== */
+tbody td:first-child{min-width:104px!important;max-width:104px!important;padding:0 6px 0 9px}
+#dRow th:first-child,#wRow th:first-child{min-width:104px!important;max-width:104px!important}
+.c-name{font-size:12.5px;font-weight:700;overflow:visible;text-overflow:clip}
+.c-name a::after{font-size:8px;margin-left:1px}
+.c-photo,.c-nophoto{width:22px;height:22px}
+.cast-cell{gap:5px}
+.th-date{min-width:42px;width:42px}
+tbody td{height:38px}
+tbody td:first-child{height:38px}
+.shift{font-size:10.5px;padding:3px 5px;min-width:36px;border-radius:8px;letter-spacing:-.2px}
+body.compact tbody td:first-child,body.compact #dRow th:first-child,body.compact #wRow th:first-child{min-width:92px!important;max-width:92px!important}
+body.compact .c-name{font-size:11px}
+body.compact .th-date{min-width:34px;width:34px}
+body.compact tbody td{height:30px}
+body.compact tbody td:first-child{height:30px}
+body.compact .shift{font-size:9px;padding:2px 3px;min-width:28px}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 </style>
 </head>
-<body class="compact">
+<body>
 
 <header>
   <div class="logo-band">
@@ -1248,55 +1250,7 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
 })();
 </script>
 
-<script>
-(function(){
-  var parts=['header','#todayPanel','.status-bar','.table-wrap','.bottom-section'];
-  var pw=document.createElement('div'); pw.id='posterWrap';
-  var hd=document.querySelector('header');
-  if(hd&&hd.parentNode){
-    hd.parentNode.insertBefore(pw,hd);
-    parts.forEach(function(sel){var el=document.querySelector(sel); if(el) pw.appendChild(el);});
-  }
-  function applyFit(){
-    if(!pw) return;
-    pw.style.zoom='';
-    var natW=pw.scrollWidth, natH=pw.scrollHeight; if(!natW||!natH) return;
-    var k=Math.min(window.innerWidth/natW, window.innerHeight/natH, 1);
-    if(!isFinite(k)||k<=0) k=1;
-    pw.style.zoom=k;
-  }
-  window.toggleCompact=function(){ applyFit(); };
-  var tb=document.getElementById('tBody');
-  if(tb&&window.MutationObserver){ new MutationObserver(function(){requestAnimationFrame(applyFit);}).observe(tb,{childList:true}); }
-  window.addEventListener('resize',function(){requestAnimationFrame(applyFit);});
-  window.addEventListener('orientationchange',function(){setTimeout(applyFit,300);});
-  document.addEventListener('click',function(e){ if(e.target.closest('.ftab')||e.target.closest('.nav-btn')) setTimeout(applyFit,80); });
-  window.addEventListener('load',function(){setTimeout(applyFit,200);});
-  document.body.classList.add('fit');
 
-  window.saveImage=async function(){
-    if(typeof html2canvas!=='function'){alert('画像ライブラリの読み込み中です。数秒後にもう一度お試しください。');return;}
-    var btn=document.getElementById('saveImgBtn'); var label=btn?btn.textContent:'';
-    if(btn){btn.disabled=true;btn.textContent='作成中…';}
-    var z=pw.style.zoom; pw.style.zoom='';
-    document.body.classList.add('exporting');
-    await new Promise(function(r){setTimeout(r,90);});
-    try{
-      var bg=getComputedStyle(document.body).backgroundColor||'#f1eee7';
-      var canvas=await html2canvas(pw,{backgroundColor:bg,scale:2,useCORS:true,logging:false,windowWidth:pw.scrollWidth,windowHeight:pw.scrollHeight});
-      var a=document.createElement('a');
-      a.href=canvas.toDataURL('image/png');
-      a.download='お給仕予定_'+((document.getElementById('navLabel')||{}).textContent||'').replace(/[ \/]/g,'')+'.png';
-      document.body.appendChild(a); a.click(); a.remove();
-    }catch(e){ alert('画像の作成に失敗しました: '+(e&&e.message||e)); }
-    document.body.classList.remove('exporting');
-    pw.style.zoom=z; applyFit();
-    if(btn){btn.disabled=false;btn.textContent=label;}
-  };
-
-  applyFit();
-})();
-</script>
 <script>
 (function(){
   /* キャストの名前/行タップで横一列を光らせる（XリンクはtargetのままなのでXにも飛ぶ）*/
@@ -1332,6 +1286,130 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       b.querySelector('.eb-x').onclick=function(){ b.classList.remove('show'); document.body.style.paddingTop=''; try{localStorage.setItem('msExtBannerHide','1');}catch(e){} if(typeof applyFit==='function')applyFit(); };
     }
   }catch(e){}
+})();
+</script>
+
+<script>
+/* =====================================================
+   📷 画像保存 — 編集サイト(edit.php)と同じ Canvas 直接描画方式
+   （html2canvasは使わない＝確実に動く）
+===================================================== */
+(function(){
+  var SNAME={L:"Linaria",M:"I's Melty",Y:"Lily Maid"};
+  var COL  ={L:'#bdf0f2',M:'#fbcdf3',Y:'#e6e6ea'};
+  var EDGE ={L:'#3ec3ca',M:'#e061c9',Y:'#9a9aa4'};
+  var FONT ='"Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif';
+
+  /* 画面の表から書き出し用データを取り出す */
+  function collect(){
+    var days=[], ths=document.querySelectorAll('.table-wrap #dRow th'), ws=document.querySelectorAll('.table-wrap #wRow th');
+    for(var i=1;i<ths.length;i++){
+      var th=ths[i], cl=th.className||'';
+      days.push({d:(th.textContent||'').trim(), wd:((ws[i]||{}).textContent||'').trim(),
+                 sun:/col-sun/.test(cl), sat:/col-sat/.test(cl), today:/col-today/.test(cl), ev:/col-event/.test(cl)});
+    }
+    var rows=[];
+    document.querySelectorAll('#tBody tr').forEach(function(tr){
+      if(tr.classList.contains('rh')) return;                 // 店舗フィルタで隠れている行は出さない
+      var tds=tr.querySelectorAll('td');
+      var nm=(tr.querySelector('.c-name')||{}).textContent||'';
+      var cells=[];
+      var any=false;
+      for(var i=1;i<tds.length;i++){
+        var sp=tds[i].querySelector('.shift:not(.dm)');       // 絞り込みで薄くなっているものは除外
+        if(sp){ cells.push({store:(sp.dataset.store||''),t:(sp.textContent||'').trim()}); any=true; }
+        else cells.push(null);
+      }
+      if(any) rows.push({name:nm.trim(),cells:cells});
+    });
+    return {days:days, rows:rows};
+  }
+
+  window.saveImage=function(){
+    var btn=document.getElementById('saveImgBtn'), label=btn?btn.innerHTML:'';
+    try{
+      var D=collect();
+      if(!D.rows.length){ alert('表示中のシフトがありません。'); return; }
+      if(btn){ btn.disabled=true; btn.innerHTML='作成中…'; }
+      var SC=2,M=22,PAD=10,NW=118,CW=70,RH=40,HH=46,BAN=62,LH=52;
+      var gridW=NW+CW*D.days.length;
+      var W=M*2+PAD*2+gridW;
+      var cardH=PAD*2+HH+RH*D.rows.length;
+      var H=M+BAN+14+cardH+LH+M/2;
+      var cv=document.createElement('canvas'); cv.width=W*SC; cv.height=H*SC;
+      var g=cv.getContext('2d'); g.scale(SC,SC);
+      function rr(x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r);
+        g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+      var bg=g.createLinearGradient(0,0,0,H); bg.addColorStop(0,'#faf6ff'); bg.addColorStop(1,'#f1e9f8');
+      g.fillStyle=bg; g.fillRect(0,0,W,H);
+      var bn=g.createLinearGradient(M,0,W-M,0); bn.addColorStop(0,'#7b5ea7'); bn.addColorStop(1,'#a86bc9');
+      g.save(); g.shadowColor='rgba(90,60,130,.25)'; g.shadowBlur=10; g.shadowOffsetY=2;
+      rr(M,M,W-M*2,BAN,14); g.fillStyle=bn; g.fill(); g.restore();
+      g.textBaseline='middle'; g.textAlign='left'; g.fillStyle='#fff'; g.font='bold 20px '+FONT;
+      g.fillText("🗓 M's GROUP お給仕予定", M+22, M+BAN/2-10);
+      var per=((document.getElementById('navLabel')||{}).textContent||'').trim();
+      g.font='12px '+FONT; g.globalAlpha=.92;
+      g.fillText(per+"   Linaria ・ I's Melty ・ Lily Maid", M+22, M+BAN/2+13); g.globalAlpha=1;
+      var cy0=M+BAN+14;
+      g.save(); g.shadowColor='rgba(90,60,130,.16)'; g.shadowBlur=14; g.shadowOffsetY=3;
+      rr(M,cy0,W-M*2,cardH,14); g.fillStyle='#fff'; g.fill(); g.restore();
+      var gx=M+PAD, gy=cy0+PAD;
+      rr(gx,gy,gridW,HH,10); g.fillStyle='#f3edf9'; g.fill();
+      g.textAlign='center';
+      D.days.forEach(function(d,i){
+        var cx=gx+NW+CW*i+CW/2;
+        g.fillStyle=d.sun?'#d93025':d.sat?'#2864c7':d.today?'#c88a10':'#4a4257';
+        g.font='bold 15px '+FONT; g.fillText(d.d,cx,gy+16);
+        g.font='10px '+FONT; g.globalAlpha=.75; g.fillText('('+d.wd+')',cx,gy+32); g.globalAlpha=1;
+      });
+      g.fillStyle='#7b5ea7'; g.font='bold 13px '+FONT; g.textAlign='left';
+      g.fillText('キャスト',gx+12,gy+HH/2);
+      D.rows.forEach(function(rw,r){
+        var cy=gy+HH+RH*r;
+        if(r%2===1){ g.fillStyle='#faf7fd'; g.fillRect(gx,cy,gridW,RH); }
+        g.strokeStyle='#f0eaf6'; g.lineWidth=1; g.beginPath(); g.moveTo(gx,cy); g.lineTo(gx+gridW,cy); g.stroke();
+        g.fillStyle='#4a4257'; g.font='bold 13px '+FONT; g.textAlign='left';
+        g.fillText(rw.name,gx+12,cy+RH/2);
+        rw.cells.forEach(function(c,i){
+          if(!c) return;
+          var cx=gx+NW+CW*i;
+          rr(cx+3,cy+4,CW-6,RH-8,8);
+          g.fillStyle=COL[c.store]||'#eee'; g.fill();
+          g.strokeStyle=EDGE[c.store]||'#bbb'; g.lineWidth=1.2; g.stroke();
+          g.fillStyle='#3a3340'; g.font='bold 12px '+FONT; g.textAlign='center';
+          g.fillText(c.t,cx+CW/2,cy+RH/2);
+        });
+      });
+      var lx=M+PAD, ly=cy0+cardH+16;
+      g.textAlign='left'; g.font='bold 12px '+FONT;
+      ['L','M','Y'].forEach(function(st){
+        var tw=g.measureText(SNAME[st]).width;
+        rr(lx,ly,tw+34,22,11); g.fillStyle=COL[st]; g.fill();
+        g.strokeStyle=EDGE[st]; g.lineWidth=1.2; g.stroke();
+        g.fillStyle='#3a3340'; g.fillText(SNAME[st],lx+17,ly+11);
+        lx+=tw+34+12;
+      });
+      g.font='11px '+FONT; g.fillStyle='#8a7f96'; g.textAlign='right';
+      g.fillText('時間は 出勤-退勤(L=ラスト) / 変更になる場合があります', W-M-PAD, ly+11);
+
+      var name='お給仕予定_'+per.replace(/[ \/]/g,'')+'.png';
+      if(cv.toBlob){
+        cv.toBlob(function(b){
+          var u=URL.createObjectURL(b), a=document.createElement('a');
+          a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function(){URL.revokeObjectURL(u);},8000);
+          if(btn){btn.disabled=false;btn.innerHTML=label;}
+        },'image/png');
+      }else{
+        var a=document.createElement('a'); a.href=cv.toDataURL('image/png'); a.download=name;
+        document.body.appendChild(a); a.click(); a.remove();
+        if(btn){btn.disabled=false;btn.innerHTML=label;}
+      }
+    }catch(e){
+      alert('画像の作成に失敗しました: '+(e&&e.message||e));
+      if(btn){btn.disabled=false;btn.innerHTML=label;}
+    }
+  };
 })();
 </script>
 </body>

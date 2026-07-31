@@ -645,7 +645,10 @@ body.tiny .c-photo,body.tiny .c-nophoto{display:none}
 tbody td{height:var(--rowH);padding:0;line-height:1}
 tbody tr{line-height:1}
 .cast-cell{line-height:1}
-.shift{font-size:var(--chip);padding:2px 3px;min-width:26px;border-radius:7px;letter-spacing:-.3px;font-weight:800}
+.shift{font-size:var(--chip);padding:0 3px;min-width:26px;border-radius:7px;letter-spacing:-.3px;font-weight:800;
+  display:inline-flex;align-items:center;justify-content:center;line-height:1;
+  height:calc(var(--rowH) - 6px);vertical-align:middle}
+tbody td{text-align:center;vertical-align:middle}
 /* 下部（イベント・凡例）をコンパクトに */
 .bottom-section{flex:1 1 auto;min-height:0;overflow:hidden;padding:7px 10px 8px;gap:7px;flex-direction:row;flex-wrap:wrap}
 .ev-card{flex:1 1 60%;min-width:200px;padding:6px 9px;overflow:hidden}
@@ -668,6 +671,11 @@ tbody tr{line-height:1}
 #navLabel{font-size:11.5px;min-width:100px}
 .today-panel,.status-bar{display:none!important}
 #tapHint{display:none!important}
+.hintbar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  background:#f6efFa;border-bottom:1px solid rgba(200,110,180,.18);
+  padding:3px 8px;font-size:9.5px;font-weight:700;color:#8a5aa8;line-height:1.3}
+.hintbar b{color:#b24d88}
+.hintbar span{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -708,6 +716,11 @@ tbody tr{line-height:1}
     <button class="nav-btn" onclick="go(1)" aria-label="次の期間">&#8250;</button>
   </div>
 </header>
+<div class="hintbar">
+  <span>👆 <b>行をタップ</b>すると、その子の予定が<b>光ります</b></span>
+  <span>🐦 <b>名前をタップ</b>で X が開きます</span>
+</div>
+
 
 <div id="todayPanel" class="today-panel">
   <div class="today-head">今日のお給仕</div>
@@ -1361,7 +1374,9 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       var gridW=NW+CW*D.days.length;
       var W=M*2+PAD*2+gridW;
       var cardH=PAD*2+HH+RH*D.rows.length;
-      var H=M+BAN+14+cardH+LH+M/2;
+      var evN=document.querySelectorAll('#evList li').length;
+      var evH=evN?(20+Math.ceil(evN/2)*16+10):0;
+      var H=M+BAN+14+cardH+LH+evH+M/2;
       var cv=document.createElement('canvas'); cv.width=W*SC; cv.height=H*SC;
       var g=cv.getContext('2d'); g.scale(SC,SC);
       function rr(x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r);
@@ -1417,20 +1432,48 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       });
       g.font='11px '+FONT; g.fillStyle='#8a7f96'; g.textAlign='right';
       g.fillText('時間は 出勤-退勤(L=ラスト) / 変更になる場合があります', W-M-PAD, ly+11);
+      /* イベント情報（ポスター風に画像へも載せる） */
+      var evs=[].slice.call(document.querySelectorAll('#evList li')).map(function(li){
+        var d=li.querySelector('.ev-date'); var dt=d?d.textContent.trim():'';
+        return {d:dt, t:li.textContent.replace(dt,'').trim()};
+      }).filter(function(x){return x.t && x.t.indexOf('イベントなし')<0;});
+      if(evs.length){
+        var ey=ly+34, colW=(W-M*2-PAD*2)/2, perCol=Math.ceil(evs.length/2);
+        g.textAlign='left'; g.font='bold 12px '+FONT; g.fillStyle='#a24fc8';
+        g.fillText('🎀 イベント情報', M+PAD, ey);
+        evs.forEach(function(ev,i){
+          var col=Math.floor(i/perCol), row=i%perCol;
+          var x=M+PAD+col*colW, y=ey+20+row*16;
+          g.font='bold 11px '+FONT; g.fillStyle='#b24d88'; g.fillText(ev.d, x, y);
+          g.font='11px '+FONT; g.fillStyle='#4a4257'; g.fillText(ev.t, x+62, y);
+        });
+      }
 
       var name='お給仕予定_'+per.replace(/[ \/]/g,'')+'.png';
+      var done=function(){ if(btn){btn.disabled=false;btn.innerHTML=label;} };
+      var fallback=function(blob){
+        var u=blob?URL.createObjectURL(blob):cv.toDataURL('image/png');
+        var a=document.createElement('a'); a.href=u; a.download=name;
+        document.body.appendChild(a); a.click(); a.remove();
+        if(blob) setTimeout(function(){URL.revokeObjectURL(u);},8000);
+        done();
+      };
       if(cv.toBlob){
         cv.toBlob(function(b){
-          var u=URL.createObjectURL(b), a=document.createElement('a');
-          a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove();
-          setTimeout(function(){URL.revokeObjectURL(u);},8000);
-          if(btn){btn.disabled=false;btn.innerHTML=label;}
+          if(!b){ fallback(null); return; }
+          /* iPhone/Android: 共有シートから「画像を保存」→ 写真フォルダに入る */
+          try{
+            var file=new File([b],name,{type:'image/png'});
+            if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
+              navigator.share({files:[file],title:'お給仕予定'})
+                .then(done)
+                .catch(function(err){ if(err&&err.name==='AbortError'){done();} else {fallback(b);} });
+              return;
+            }
+          }catch(_){}
+          fallback(b);
         },'image/png');
-      }else{
-        var a=document.createElement('a'); a.href=cv.toDataURL('image/png'); a.download=name;
-        document.body.appendChild(a); a.click(); a.remove();
-        if(btn){btn.disabled=false;btn.innerHTML=label;}
-      }
+      }else{ fallback(null); }
     }catch(e){
       alert('画像の作成に失敗しました: '+(e&&e.message||e));
       if(btn){btn.disabled=false;btn.innerHTML=label;}
@@ -1446,6 +1489,7 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
 (function(){
   function els(){return {
     hd:document.querySelector('header'),
+    hint:document.querySelector('.hintbar'),
     tw:document.querySelector('.table-wrap'),
     tb:document.getElementById('tBody'),
     bs:document.querySelector('.bottom-section'),
@@ -1467,7 +1511,8 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
     apply(30);
     var headH=e.thead?e.thead.offsetHeight:30;
     var bsH=e.bs?e.bs.offsetHeight:0;
-    var rh=Math.floor((window.innerHeight-e.hd.offsetHeight-bsH-headH-6)/rows);
+    var hintH=e.hint?e.hint.offsetHeight:0;
+    var rh=Math.floor((window.innerHeight-e.hd.offsetHeight-hintH-bsH-headH-6)/rows);
     rh=Math.max(15,Math.min(34,isFinite(rh)?rh:26));
     apply(rh);
     /* 実際の高さを見て、収まるまで1pxずつ詰める（最大18回） */

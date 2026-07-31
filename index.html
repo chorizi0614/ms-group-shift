@@ -658,9 +658,9 @@ tbody td{text-align:center;vertical-align:middle;position:relative}
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 /* 下部（イベント・凡例）をコンパクトに */
 .bottom-section{flex:1 1 auto;min-height:0;overflow:hidden;padding:7px 10px 8px;gap:7px;flex-direction:row;flex-wrap:wrap}
-.ev-card{flex:1 1 60%;min-width:200px;padding:6px 9px;overflow:hidden}
+.ev-card{flex:1 1 60%;min-width:200px;padding:6px 9px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
 .ev-head{font-size:11px;margin-bottom:3px}
-#evList{display:grid;grid-template-columns:1fr 1fr;column-gap:10px;gap:1px}
+#evList{display:grid;grid-template-columns:1fr 1fr;column-gap:10px;gap:1px;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;flex:1 1 auto}
 #evList li{font-size:10px;line-height:1.35}
 .ev-date{font-size:9.5px}
 .legend{flex:0 0 auto;gap:5px}
@@ -1530,6 +1530,7 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       st.setProperty('--dayW',(rh<20?28:rh<24?30:rh<28?32:34)+'px');
       document.body.classList.toggle('tiny',rh<26);
     }
+    if(e.bs){ e.bs.style.maxHeight=''; e.bs.style.overflow=''; }   // 前回の縮小をリセットしてから測る
     /* まず理論値で当たりをつける */
     apply(30);
     var headH=e.thead?e.thead.offsetHeight:30;
@@ -1538,18 +1539,18 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
     var VH=(window.visualViewport&&window.visualViewport.height)?window.visualViewport.height:window.innerHeight;
     var RES=document.body.classList.contains('inapp')?96:6;   // X等の下部バー分を確保
     var rh=Math.floor((VH-e.hd.offsetHeight-hintH-bsH-headH-RES)/rows);
-    rh=Math.max(15,Math.min(34,isFinite(rh)?rh:26));
+    rh=Math.max(13,Math.min(34,isFinite(rh)?rh:26));
     apply(rh);
     /* 実際の高さを見て、収まるまで1pxずつ詰める（最大18回） */
     for(var i=0;i<18;i++){
       if(document.documentElement.scrollHeight<=VH-RES+6) break;
-      if(rh<=15) break;
+      if(rh<=13) break;
       rh--; apply(rh);
     }
     /* それでも溢れる時はイベント欄を縮める */
     if(e.bs && document.documentElement.scrollHeight>VH-RES+6){
       var over=document.documentElement.scrollHeight-(VH-RES);
-      e.bs.style.maxHeight=Math.max(40,e.bs.offsetHeight-over-4)+'px';
+      e.bs.style.maxHeight=Math.max(52,e.bs.offsetHeight-over-4)+'px';
       e.bs.style.overflow='hidden';
     } else if(e.bs){ e.bs.style.maxHeight=''; }
   }

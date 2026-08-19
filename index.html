@@ -638,7 +638,6 @@ tbody td.cd-today{background:var(--today-bg);box-shadow:inset 2px 0 rgba(220,150
 :root{--rowH:26px;--chip:9.5px;--nameW:88px;--dayW:34px;--nameF:11.5px}
 html{overflow:hidden}
 body{display:flex;flex-direction:column;height:100dvh;min-height:0;overflow:hidden}
-body.inapp{height:calc(100dvh - 92px)}   /* X等アプリ内ブラウザの下部バー分を確保 */
 header,.hintbar,.today-panel,.status-bar,#tapHint{flex:0 0 auto}
 .wrapfit{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
 .table-wrap{flex:1 1 auto;min-height:0;overflow-x:auto;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -648,9 +647,6 @@ header,.hintbar,.today-panel,.status-bar,#tapHint{flex:0 0 auto}
 .table-wrap thead th:first-child{left:0;z-index:16}
 /* 顔写真は常に非表示（1画面に入る行数を優先） */
 .c-photo,.c-nophoto{display:none!important}
-/* セレクタリストにすると .cmp-btn 側(0,2,1)の詳細度で判定され #saveImgBtn(1,0,0) に負けるので必ず分けて書く */
-body.inapp .cmp-btn{bottom:calc(106px + env(safe-area-inset-bottom))!important}
-body.inapp #saveImgBtn{bottom:calc(106px + env(safe-area-inset-bottom))!important}
 /* 名前列（見切れないよう固定幅・左固定） */
 tbody td:first-child{min-width:var(--nameW)!important;max-width:var(--nameW)!important;padding:0 4px 0 7px;height:var(--rowH)}
 #dRow th:first-child,#wRow th:first-child{min-width:var(--nameW)!important;max-width:var(--nameW)!important}
@@ -1345,8 +1341,10 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
   /* アプリ内ブラウザ（X/Instagram/LINE/FB等）の時は「ブラウザで開く」案内 */
   try{
     var ua=navigator.userAgent||'';
-    var inApp=/Twitter|TwitterAndroid|FBAN|FBAV|FB_IAB|Instagram|Line\//i.test(ua)
-      || (/(iPhone|iPod|iPad|Android)/i.test(ua) && !/(Safari|CriOS|Chrome|FxiOS|EdgiOS)/i.test(ua));
+    /* 2026-08-18 v5: アプリ内ブラウザ(X / アプリメンバーズ等)も通常ブラウザと同じ表示にする。
+       高さは visualViewport から取るので下部バー分の予約は不要になった。
+       「ブラウザで開くことを推奨」バナーも出さない（この不具合の回避策だったため）。 */
+    var inApp=false;
     if(inApp){ document.body.classList.add('inapp'); if(typeof applyFit==='function')applyFit(); }
     if(inApp && localStorage.getItem('msExtBannerHide')!=='1'){
       var b=document.createElement('div'); b.id='extBanner';
@@ -1550,8 +1548,9 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
        せずに見せる」ための行の高さ調整だけ。イベント欄には一切触らない。 */
     if(e.bs){ e.bs.style.maxHeight=''; e.bs.style.overflow=''; }
     var VH=(window.visualViewport&&window.visualViewport.height)?window.visualViewport.height:window.innerHeight;
-    var RES=document.body.classList.contains('inapp')?92:0;   /* アプリ内ブラウザの下部バー分 */
-    document.body.style.height=Math.max(320,VH-RES)+'px';
+    /* v5: アプリ内ブラウザ向けの決め打ち予約(92px)は廃止。visualViewport が
+       実際の可視領域を返すので、どのブラウザでもこれだけで正しい。 */
+    document.body.style.height=Math.max(320,VH)+'px';
     apply(26);
     var headH=e.thead?e.thead.offsetHeight:30;
     var rh=Math.floor((e.tw.clientHeight-headH)/rows);

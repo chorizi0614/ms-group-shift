@@ -1540,9 +1540,9 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
     var st=document.documentElement.style;
     function apply(rh){
       st.setProperty('--rowH',rh+'px');
-      st.setProperty('--chip',Math.max(8,Math.min(11,Math.round(rh*0.34*10)/10))+'px');
-      st.setProperty('--nameF',Math.max(9.5,Math.min(13,Math.round(rh*0.42*10)/10))+'px');
-      st.setProperty('--dayW',(rh<24?30:rh<28?32:34)+'px');
+      st.setProperty('--chip',Math.max(6.8,Math.min(11,Math.round(rh*0.34*10)/10))+'px');
+      st.setProperty('--nameF',Math.max(8.5,Math.min(13,Math.round(rh*0.42*10)/10))+'px');
+      st.setProperty('--dayW',(rh<18?26:rh<22?28:rh<24?30:rh<28?32:34)+'px');
     }
     /* v4: 高さの配分は body(flex) が決めるので、ここは「表の中をなるべくスクロール
        せずに見せる」ための行の高さ調整だけ。イベント欄には一切触らない。 */
@@ -1554,7 +1554,10 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
     apply(26);
     var headH=e.thead?e.thead.offsetHeight:30;
     var rh=Math.floor((e.tw.clientHeight-headH)/rows);
-    rh=Math.max(20,Math.min(30,isFinite(rh)?rh:26));
+    /* v6: 下限を 13px まで下げる。Xやアプリメンバーズは上下にバーがある分
+       表示領域が狭いので、20px固定だと表が下で切れて全員分入らなかった。
+       イベント欄は固定サイズのままなので、縮むのは表だけ。 */
+    rh=Math.max(13,Math.min(30,isFinite(rh)?rh:26));
     apply(rh);
   }
   window.__fitShift=fit;

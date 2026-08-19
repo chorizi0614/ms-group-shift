@@ -648,7 +648,9 @@ header,.hintbar,.today-panel,.status-bar,#tapHint{flex:0 0 auto}
 .table-wrap thead th:first-child{left:0;z-index:16}
 /* 顔写真は常に非表示（1画面に入る行数を優先） */
 .c-photo,.c-nophoto{display:none!important}
-body.inapp .cmp-btn,body.inapp #saveImgBtn{bottom:calc(106px + env(safe-area-inset-bottom))!important}
+/* セレクタリストにすると .cmp-btn 側(0,2,1)の詳細度で判定され #saveImgBtn(1,0,0) に負けるので必ず分けて書く */
+body.inapp .cmp-btn{bottom:calc(106px + env(safe-area-inset-bottom))!important}
+body.inapp #saveImgBtn{bottom:calc(106px + env(safe-area-inset-bottom))!important}
 /* 名前列（見切れないよう固定幅・左固定） */
 tbody td:first-child{min-width:var(--nameW)!important;max-width:var(--nameW)!important;padding:0 4px 0 7px;height:var(--rowH)}
 #dRow th:first-child,#wRow th:first-child{min-width:var(--nameW)!important;max-width:var(--nameW)!important}

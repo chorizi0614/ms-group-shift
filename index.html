@@ -1559,6 +1559,12 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
        イベント欄は固定サイズのままなので、縮むのは表だけ。 */
     rh=Math.max(13,Math.min(30,isFinite(rh)?rh:26));
     apply(rh);
+    /* 1回の計算だと、行高を変えた後に下部の高さが変わって表が溢れることがある。
+       溢れている間だけ1pxずつ詰める（下限13px・最大12回）。イベント欄は絶対に縮めない。 */
+    for(var g=0; g<12 && rh>13; g++){
+      if(e.tw.scrollHeight<=e.tw.clientHeight+1) break;
+      rh--; apply(rh);
+    }
   }
   window.__fitShift=fit;
   var tb=document.getElementById('tBody');

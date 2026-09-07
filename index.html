@@ -910,7 +910,10 @@ body.table-mode #saveImgBtn{display:inline-flex!important;min-height:32px;paddin
 @media(min-width:720px){body.table-mode .view-tabs{width:696px;margin-inline:auto}body.table-mode .table-wrap{--overviewName:100px}body.table-mode .ftab{min-height:36px}}
 @media(max-height:600px) and (max-width:719px){body.table-mode .logo-band{display:none}body.table-mode .filter-row{padding-block:2px}body.table-mode .ftab{min-height:28px}body.table-mode .view-tabs button{min-height:26px}body.table-mode .nav-btn{height:26px}body.table-mode .overview-actions{padding-block:2px}body.table-mode .overview-actions button{min-height:28px}body.table-mode #saveImgBtn{min-height:28px}}
 </style>
-</head>
+<style id="one-line-times-20260908">
+body.table-mode .shift{flex-direction:row}
+body.table-mode .shift .time-inline{display:inline-block;flex:none;width:max-content;white-space:nowrap;line-height:1;font-size:11px;font-weight:700;letter-spacing:-.3px;transform-origin:center}
+</style></head>
 <body class="table-mode">
 
 <header>
@@ -986,7 +989,7 @@ body.table-mode #saveImgBtn{display:inline-flex!important;min-height:32px;paddin
 
 <div class="tap-hint" id="tapHint">💡 名前をタップすると、そのキャストの<b>𝕏（旧Twitter）</b>が開きます<button class="th-x" onclick="hideHint()" aria-label="閉じる">×</button></div>
 
-<div class="overview-guide"><span>上＝出勤／下＝退勤（0〜5時は翌朝）<br><b>行をタップで拡大</b>・L＝閉店まで</span></div>
+<div class="overview-guide"><span>時刻＝出勤-退勤（退勤0〜5時は翌朝）<br><b>行をタップで拡大</b>・L＝閉店まで</span></div>
 <div class="table-wrap">
   <table>
     <thead>
@@ -1615,15 +1618,21 @@ function overviewFit(){
   st.setProperty('--overviewMinute',Math.min(10,Math.max(5,(row-4)/2.12)*.82,Math.max(4,((cell?.getBoundingClientRect().width||22)-2)/2.7))+'px');
   st.setProperty('--overviewNameFont',Math.min(13,Math.max(7,row*.57))+'px');
   wrap.scrollLeft=0;wrap.scrollTop=0;
+  wrap.querySelectorAll('.time-inline').forEach(span=>{
+    span.style.transform='';
+    const available=span.parentElement.clientWidth;
+    const natural=span.scrollWidth;
+    if(natural>available&&available>0)span.style.transform='scale('+Math.min(1,available/natural)+')';
+  });
 }
 function overviewTimes(){
   document.querySelectorAll('#tBody .shift').forEach(sp=>{
-    const full=fmtShiftTime(sp.dataset.raw),parts=full.split('–');
+    const full=fmtShiftTime(sp.dataset.raw);
     sp.setAttribute('aria-label',fmtShiftTime(sp.dataset.raw,true));
-    sp.replaceChildren();
-    if(parts.length===2){
-      parts.forEach(text=>{const span=document.createElement('span');span.className='time-part'+(text.includes(':')?' minute':'');span.textContent=text.replace(/^翌/,'');sp.appendChild(span);});
-    }else{const span=document.createElement('span');span.className='time-raw';span.textContent=full;sp.appendChild(span);}
+    const span=document.createElement('span');
+    span.className='time-inline';
+    span.textContent=full.replace(/–/g,'-').replace(/翌(\d+):00/g,'$1').replace(/翌/g,'');
+    sp.replaceChildren(span);
   });
   requestAnimationFrame(overviewFit);
 }

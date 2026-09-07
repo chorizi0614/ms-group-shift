@@ -913,7 +913,11 @@ body.table-mode #saveImgBtn{display:inline-flex!important;min-height:32px;paddin
 <style id="one-line-times-20260908">
 body.table-mode .shift{flex-direction:row}
 body.table-mode .shift .time-inline{display:inline-block;flex:none;width:max-content;white-space:nowrap;line-height:1;font-size:11px;font-weight:700;letter-spacing:-.3px;transform-origin:center}
-</style></head>
+</style><style id="cast-detail-photo-style">
+.overview-cast-photo{display:flex;justify-content:center;align-items:center;width:112px;height:140px;margin:0 auto 14px;border-radius:14px;overflow:hidden;background:#f3edf6;color:#82678e;font-size:12px}
+.overview-cast-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
+</style>
+</head>
 <body class="table-mode">
 
 <header>
@@ -1657,6 +1661,17 @@ function initOverview(){
     opener=tr;open(name+' のお給仕予定');
     const ul=document.createElement('ul');ul.className='overview-detail-list';
     const rows=publicRows.filter(r=>r[0]===name&&(curPeriod.h===1?Number(r[1])<=15:Number(r[1])>15)&&(activeFilter==='all'||r[2]===activeFilter));
+    const portrait=document.createElement('div');portrait.className='overview-cast-photo';
+    const photoRow=rows.find(r=>r[4])||publicRows.find(r=>r[0]===name&&r[4]);
+    const fallback=()=>{portrait.replaceChildren();portrait.textContent='写真準備中';};
+    fallback();
+    if(photoRow){
+      const img=document.createElement('img');img.alt=name+'の写真';img.decoding='async';
+      img.addEventListener('error',fallback,{once:true});
+      img.src=CONFIG.PHOTO_BASE+encodeURIComponent(String(photoRow[4]));
+      portrait.replaceChildren(img);
+    }
+    content.appendChild(portrait);
     rows.sort((a,b)=>Number(a[1])-Number(b[1])).forEach(r=>{
       const day=curPeriod.y+'-'+String(curPeriod.m).padStart(2,'0')+'-'+String(r[1]).padStart(2,'0');
       const li=document.createElement('li');li.className='store-'+r[2];

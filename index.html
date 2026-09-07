@@ -844,8 +844,74 @@ body.table-mode .daily-view{display:none}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 </style>
+<style id="overview-fit-20260908">/* Compact overview is an explicit user preference; daily view retains large type. */
+body.table-mode{display:flex;flex-direction:column;height:100vh;height:100dvh;min-height:0;overflow:hidden}
+body.table-mode header,body.table-mode .hintbar,body.table-mode #notice,body.table-mode #changeMessage{flex:none}
+body.table-mode .logo-band{padding:calc(4px + env(safe-area-inset-top)) 10px 4px;gap:8px}
+body.table-mode .ms-logo{height:24px}
+body.table-mode .header-title{font-size:12px;letter-spacing:2px}
+body.table-mode .header-period{display:none}
+body.table-mode .filter-row{padding:4px 8px;gap:5px;width:100%}
+body.table-mode .ftab{min-height:34px;padding:3px 2px;flex-direction:row;gap:4px;border-radius:12px}
+body.table-mode .ftab-logo{display:none}
+body.table-mode .ftab-name{font-size:10px}
+body.table-mode .ftab.is-all{font-size:11px}
+body.table-mode .view-tabs{margin:2px 8px 3px;padding:2px;border-radius:10px}
+body.table-mode .view-tabs button{min-height:30px;font-size:12px;border-radius:8px}
+body.table-mode .nav-row{padding:2px 8px;gap:16px}
+body.table-mode .nav-btn{height:30px;width:36px;font-size:21px;border-radius:10px}
+body.table-mode #navLabel{font-size:13px}
+body.table-mode .hintbar{padding:0 8px 3px;min-height:30px;gap:3px}
+body.table-mode .fetch-info{font-size:10px;gap:8px;line-height:1.3}
+body.table-mode .fetch-info br{display:none}
+body.table-mode .fetch-info button{min-height:28px;min-width:48px;font-size:11px;padding:2px 6px;border-radius:9px}
+body.table-mode #notice{margin:2px 8px;font-size:12px;padding:7px 10px}
+body.table-mode #notice .nt-sub{display:none}
+body.table-mode .change-message{margin:2px 8px;padding:5px 8px;font-size:11px}
+body.table-mode .table-tools,body.table-mode .share-link-row,body.table-mode .bottom-section{display:none}
+.overview-guide{display:none}
+body.table-mode .overview-guide{display:flex;align-items:center;justify-content:center;gap:9px;font-size:10px;color:#725b7b;padding:3px 6px;flex:none}
+body.table-mode .overview-guide b{font-weight:700;color:#5b4365}
+body.table-mode .table-wrap{flex:1 1 auto;min-height:0;max-height:none;height:auto;width:100%;overflow:hidden;border:0;margin:0}
+body.table-mode .table-wrap table{width:100%;min-width:0;table-layout:fixed;border-collapse:collapse}
+body.table-mode .table-wrap #dRow th:first-child{width:var(--overviewName,62px);min-width:0!important;max-width:none!important;font-size:10px}
+body.table-mode .table-wrap #wRow th:first-child{min-width:0!important;max-width:none!important}
+body.table-mode .table-wrap th.th-date{min-width:0;width:auto}
+body.table-mode .table-wrap thead{position:static}
+body.table-mode .table-wrap .th-d{height:18px;font-size:10px;line-height:1}
+body.table-mode .table-wrap .th-w{height:13px;font-size:8px;line-height:1}
+body.table-mode .table-wrap #dRow th:first-child{height:18px}
+body.table-mode .table-wrap #wRow th:first-child{height:13px}
+body.table-mode .col-today .th-d>span{width:17px;height:17px}
+body.table-mode .table-wrap tbody td{height:var(--overviewRow,26px);padding:0;line-height:1;overflow:hidden}
+body.table-mode .table-wrap tbody td:first-child{min-width:0!important;max-width:none!important;padding:0 2px 0 4px;height:var(--overviewRow,26px);cursor:pointer}
+body.table-mode .c-name{font-size:var(--overviewNameFont,11px);line-height:1.15;overflow:visible;white-space:normal;overflow-wrap:anywhere}
+body.table-mode .c-name a{display:inline;min-height:0;text-decoration:none}
+body.table-mode .c-name a::after{display:none}
+body.table-mode .shift{display:flex;flex-direction:column;gap:0;align-items:center;justify-content:center;min-width:0;width:calc(100% - 2px);max-width:none;height:calc(var(--overviewRow,26px) - 3px);padding:0;border-radius:4px;border-width:0;letter-spacing:-.2px;font-size:var(--overviewTime,10px);font-weight:700;line-height:1.05;overflow:hidden}
+body.table-mode .shift .time-part{display:block;white-space:nowrap;line-height:1.05}
+body.table-mode .shift .time-part.minute{font-size:var(--overviewMinute,8px);letter-spacing:-.4px}
+body.table-mode .shift .time-raw{font-size:.75em;white-space:normal;overflow-wrap:anywhere}
+body.table-mode .table-wrap .wk-sep{border-left-width:1px!important}
+.overview-actions{display:none}
+body.table-mode .overview-actions{display:flex;justify-content:center;align-items:center;gap:12px;flex:none;padding:4px 8px calc(4px + env(safe-area-inset-bottom));background:#faf7fb}
+body.table-mode #saveImgBtn{display:inline-flex!important;min-height:32px;padding:5px 10px;font-size:11px;margin:0;border-radius:9px}
+.overview-actions button{min-height:32px;padding:5px 10px;font-size:11px;background:white;color:#694b7a;border:1px solid #d8c8e3;border-radius:9px}
+.overview-dialog{position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;background:#35213b66;padding:16px}
+.overview-dialog-card{width:100%;max-width:460px;max-height:85vh;max-height:85dvh;overflow:auto;background:#faf7fb;border-radius:18px;padding:18px;box-shadow:0 8px 40px #34203e33}
+.overview-dialog-head{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.overview-dialog-head h2{font-size:18px;color:#51385e}
+.overview-dialog-head button{min-height:44px;min-width:60px;border:1px solid #d8c8e3;border-radius:12px;font-size:14px;color:#684f73;background:white}
+.overview-detail-list{list-style:none;display:grid;gap:8px}
+.overview-detail-list li{background:white;border-radius:12px;padding:12px;border-left:4px solid var(--accent,#c7aed4);font-size:15px;line-height:1.7}
+.overview-detail-list time{font-size:16px;font-weight:700;display:block}
+.overview-detail-list small{font-size:13px;color:#786080}
+.overview-x{display:flex;align-items:center;justify-content:center;margin-top:14px;border:1px solid #d8c8e3;background:white;border-radius:12px;min-height:44px;color:#684d76;text-decoration:none;font-size:14px}
+@media(min-width:720px){body.table-mode .view-tabs{width:696px;margin-inline:auto}body.table-mode .table-wrap{--overviewName:100px}body.table-mode .ftab{min-height:36px}}
+@media(max-height:600px) and (max-width:719px){body.table-mode .logo-band{display:none}body.table-mode .filter-row{padding-block:2px}body.table-mode .ftab{min-height:28px}body.table-mode .view-tabs button{min-height:26px}body.table-mode .nav-btn{height:26px}body.table-mode .overview-actions{padding-block:2px}body.table-mode .overview-actions button{min-height:28px}body.table-mode #saveImgBtn{min-height:28px}}
+</style>
 </head>
-<body class="day-mode">
+<body class="table-mode">
 
 <header>
   <div class="logo-band">
@@ -878,8 +944,8 @@ body.table-mode .daily-view{display:none}
   </div>
 
   <div class="view-tabs" role="group" aria-label="表示の切り替え">
-    <button type="button" data-view="day" aria-pressed="true">日別で見る</button>
-    <button type="button" data-view="table" aria-pressed="false">半月表で見る</button>
+    <button type="button" data-view="day" aria-pressed="false">日別で見る</button>
+    <button type="button" data-view="table" aria-pressed="true">半月表で見る</button>
   </div>
   <div class="nav-row">
     <button class="nav-btn" onclick="go(-1)" aria-label="前の期間">&#8249;</button>
@@ -920,6 +986,7 @@ body.table-mode .daily-view{display:none}
 
 <div class="tap-hint" id="tapHint">💡 名前をタップすると、そのキャストの<b>𝕏（旧Twitter）</b>が開きます<button class="th-x" onclick="hideHint()" aria-label="閉じる">×</button></div>
 
+<div class="overview-guide"><span>上＝出勤／下＝退勤（0〜5時は翌朝）<br><b>行をタップで拡大</b>・L＝閉店まで</span></div>
 <div class="table-wrap">
   <table>
     <thead>
@@ -930,7 +997,7 @@ body.table-mode .daily-view{display:none}
   </table>
 </div>
 
-<button class="cmp-btn" id="saveImgBtn" onclick="saveImage()" style="bottom:64px">📷 半月表を画像保存</button>
+<div class="overview-actions"><button type="button" id="overviewInfo">色・時刻・イベント</button><button class="cmp-btn" id="saveImgBtn" onclick="saveImage()" style="bottom:64px">📷 画像保存</button></div>
 <button class="cmp-btn on" id="cmpBtn" onclick="toggleCompact()">
   <span class="cmp-icon">⊟</span>通常表示
 </button>
@@ -950,9 +1017,10 @@ body.table-mode .daily-view{display:none}
     <div class="lg-item lg-M"><span class="lg-dot"></span><img class="lg-logo" src="https://is-melty.jp/img/logo-ismelty.webp" alt="" onerror="this.style.display='none'"><span class="lg-name">I's Melty</span></div>
     <div class="lg-item lg-Y"><span class="lg-dot"></span><img class="lg-logo" src="https://lily-maid.com/img/logo-lilymaid.webp" alt="" onerror="this.style.display='none'"><span class="lg-name">Lily Maid</span></div>
   </div>
-  <div class="tm-legend">🕒 時刻＝出勤–退勤（<b>18–23:30</b> は 18:00〜23:30）／<b>ラスト</b>＝閉店まで／<b>翌4:00</b>＝翌朝4:00　※変更になる場合があります</div>
+  <div class="tm-legend">🕒 時刻＝出勤–退勤（<b>18–23:30</b> は 18:00〜23:30）／<b>L</b>＝閉店まで／<b>翌4:00</b>＝翌朝4:00　※変更になる場合があります</div>
 </div>
 
+<div id="overviewDialog" class="overview-dialog" role="dialog" aria-modal="true" aria-labelledby="overviewTitle" hidden><div class="overview-dialog-card"><div class="overview-dialog-head"><h2 id="overviewTitle"></h2><button type="button" id="overviewClose">閉じる</button></div><div id="overviewContent"></div></div></div>
 <script>
 /* =====================================================
    CONFIG
@@ -1034,7 +1102,7 @@ function fmtShiftTime(raw, long){
   var b=tok(p.slice(1).join('-'));
   if(!b) return s;                                // 終了が読めない → 原文のまま
   var A=one(a,!!a.nx);
-  if(b.last) return A+'–ラスト';
+  if(b.last) return A+'–L';
   var next=b.nx||b.h>=24||(b.h*60+b.mi)<(a.h*60+(a.mi||0));
   return A+'–'+one(b,next);
 }
@@ -1401,7 +1469,7 @@ function periodFromHash(){
 const STORE_NAMES={L:'Linaria',M:"I's Melty",Y:'Lily Maid'};
 const STORE_SLUGS={L:'linaria',M:'ismelty',Y:'lily'};
 let publicRows=[], publicMonth='', publicState='loading', changeMessage='';
-let selectedDay='', viewMode='day', followToday=true, initialTableScroll=true;
+let selectedDay='', viewMode='table', followToday=true, initialTableScroll=true;
 function jstNow(now=new Date()){
   return new Date(now.getTime()+9*60*60*1000);
 }
@@ -1419,7 +1487,7 @@ function syncLink(){
   if(activeFilter==='all')u.searchParams.set('store','all');else u.searchParams.set('store',STORE_SLUGS[activeFilter]);
   u.searchParams.delete('date');u.searchParams.delete('view');u.hash='';
   if(viewMode==='table'){u.searchParams.set('view','table');u.hash=curPeriod.y+'-'+curPeriod.m+'-'+curPeriod.h;}
-  else if(!followToday)u.searchParams.set('date',selectedDay);
+  else {u.searchParams.set('view','day');if(!followToday)u.searchParams.set('date',selectedDay);}
   history.replaceState(null,'',u);
 }
 function updateTabs(){
@@ -1427,7 +1495,7 @@ function updateTabs(){
   document.body.classList.toggle('table-mode',viewMode==='table');
   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===viewMode)));
   document.querySelectorAll('.ftab').forEach(b=>{const on=b.dataset.store===activeFilter;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
-  if(viewMode==='table'&&curPeriod){document.getElementById('titlePeriod').textContent=periodLabel(curPeriod);document.title=navLabel(curPeriod)+' お給仕予定 | '+(STORE_NAMES[activeFilter]||'MS Group');}
+  if(viewMode==='table'&&curPeriod){requestAnimationFrame(overviewFit);document.getElementById('titlePeriod').textContent=periodLabel(curPeriod);document.title=navLabel(curPeriod)+' お給仕予定 | '+(STORE_NAMES[activeFilter]||'MS Group');}
 }
 function selectView(mode){
   viewMode=mode;updateTabs();
@@ -1443,6 +1511,7 @@ function selectDay(day,follow=false){
   }else loadAndRender(curPeriod);
 }
 function scrollToSelectedDay(){
+  if(viewMode==='table')return; // Full overview: all dates are already visible.
   const tw=document.querySelector('.table-wrap');
   const p=dayPeriod(selectedDay);
   if(p.y!==curPeriod.y||p.m!==curPeriod.m||p.h!==curPeriod.h)return;
@@ -1517,7 +1586,7 @@ function initPublicView(){
   selectedDay=validDay(u.searchParams.get('date')||'')?u.searchParams.get('date'):businessDay();
   followToday=!u.searchParams.has('date');
   const old=periodFromHash();
-  viewMode=(u.searchParams.get('view')==='table'||old)?'table':'day';
+  viewMode=u.searchParams.get('view')==='day'||(!old&&u.searchParams.has('date')&&u.searchParams.get('view')!=='table')?'day':'table';
   curPeriod=viewMode==='table'?(old||dayPeriod(selectedDay)):dayPeriod(selectedDay);
   const tabs=document.querySelectorAll('.ftab');['all','L','M','Y'].forEach((s,i)=>tabs[i].dataset.store=s);
   document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>selectView(b.dataset.view));
@@ -1532,6 +1601,80 @@ function initPublicView(){
   window.addEventListener('pageshow',e=>{if(e.persisted)onReturn()});
 }
 
+/* Fit the full half-month overview; tapping a row reveals the unabridged times. */
+function overviewFit(){
+  if(viewMode!=='table')return;
+  const wrap=document.querySelector('.table-wrap'),head=wrap.querySelector('thead');
+  const count=[...document.querySelectorAll('#tBody tr')].filter(r=>!r.classList.contains('rh')).length;
+  if(!count)return;
+  const row=Math.max(4,Math.floor((wrap.clientHeight-head.offsetHeight-2)/count));
+  const st=wrap.style;
+  st.setProperty('--overviewRow',row+'px');
+  st.setProperty('--overviewTime',Math.min(12,Math.max(5,(row-4)/2.12))+'px');
+  const cell=wrap.querySelector('#dRow .th-date');
+  st.setProperty('--overviewMinute',Math.min(10,Math.max(5,(row-4)/2.12)*.82,Math.max(4,((cell?.getBoundingClientRect().width||22)-2)/2.7))+'px');
+  st.setProperty('--overviewNameFont',Math.min(13,Math.max(7,row*.57))+'px');
+  wrap.scrollLeft=0;wrap.scrollTop=0;
+}
+function overviewTimes(){
+  document.querySelectorAll('#tBody .shift').forEach(sp=>{
+    const full=fmtShiftTime(sp.dataset.raw),parts=full.split('–');
+    sp.setAttribute('aria-label',fmtShiftTime(sp.dataset.raw,true));
+    sp.replaceChildren();
+    if(parts.length===2){
+      parts.forEach(text=>{const span=document.createElement('span');span.className='time-part'+(text.includes(':')?' minute':'');span.textContent=text.replace(/^翌/,'');sp.appendChild(span);});
+    }else{const span=document.createElement('span');span.className='time-raw';span.textContent=full;sp.appendChild(span);}
+  });
+  requestAnimationFrame(overviewFit);
+}
+function initOverview(){
+  const box=document.getElementById('overviewDialog'),title=document.getElementById('overviewTitle'),content=document.getElementById('overviewContent');
+  let opener=null;
+  const close=()=>{box.hidden=true;if(opener&&opener.isConnected)opener.focus();};
+  function open(label){title.textContent=label;content.replaceChildren();box.hidden=false;document.getElementById('overviewClose').focus();}
+  document.getElementById('overviewClose').onclick=close;
+  box.addEventListener('click',e=>{if(e.target===box)close()});
+  box.addEventListener('keydown',e=>{
+    if(e.key==='Escape')close();
+    if(e.key==='Tab'){
+      const all=[...box.querySelectorAll('button,a[href]')],first=all[0],last=all[all.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    }
+  });
+  function showRow(tr){
+    if(tr.classList.contains('rh'))return;
+    const name=tr.querySelector('.c-name')?.textContent.trim();if(!name)return;
+    opener=tr;open(name+' のお給仕予定');
+    const ul=document.createElement('ul');ul.className='overview-detail-list';
+    const rows=publicRows.filter(r=>r[0]===name&&(curPeriod.h===1?Number(r[1])<=15:Number(r[1])>15)&&(activeFilter==='all'||r[2]===activeFilter));
+    rows.sort((a,b)=>Number(a[1])-Number(b[1])).forEach(r=>{
+      const day=curPeriod.y+'-'+String(curPeriod.m).padStart(2,'0')+'-'+String(r[1]).padStart(2,'0');
+      const li=document.createElement('li');li.className='store-'+r[2];
+      li.innerHTML=esc(shortDate(day))+'<time>'+esc(fmtShiftTime(r[3],true))+'</time><small>'+esc(STORE_NAMES[r[2]]||r[2])+'</small>';ul.appendChild(li);
+    });content.appendChild(ul);
+    const x=rows.find(r=>/^[A-Za-z0-9_]{1,15}$/.test(r[5]||''));
+    if(x){const a=document.createElement('a');a.href='https://x.com/'+x[5];a.target='_blank';a.rel='noopener noreferrer';a.className='overview-x';a.textContent=name+' の 𝕏 を開く';a.dataset.castName=name;a.addEventListener('click',close);content.appendChild(a);}
+  }
+  document.addEventListener('click',e=>{
+    if(e.target.closest('.overview-x')){close();return;}
+    const tr=e.target.closest('#tBody tr');if(viewMode!=='table'||!tr)return;
+    e.preventDefault();e.stopImmediatePropagation();showRow(tr);
+  },true);
+  document.getElementById('tBody').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr')){e.preventDefault();showRow(e.target)}});
+  document.getElementById('overviewInfo').onclick=function(){
+    opener=this;open('店舗カラー・イベント');
+    const legend=document.querySelector('.bottom-section').cloneNode(true);legend.removeAttribute('class');legend.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));content.appendChild(legend);
+  };
+  const body=document.getElementById('tBody');
+  new MutationObserver(()=>{body.querySelectorAll('tr').forEach(tr=>{tr.tabIndex=0;tr.setAttribute('aria-label',(tr.querySelector('.c-name')?.textContent||'')+'の予定を拡大')});overviewTimes();}).observe(body,{childList:true});
+  new ResizeObserver(()=>requestAnimationFrame(overviewFit)).observe(document.querySelector('.table-wrap'));
+  document.querySelectorAll('.ftab,[data-view]').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(overviewFit)));
+  window.addEventListener('resize',()=>requestAnimationFrame(overviewFit));
+  overviewTimes();
+}
+
+initOverview();
 initPublicView();
 function hideHint(){var h=document.getElementById('tapHint');if(h)h.style.display='none';try{localStorage.setItem('hideTapHint','1');}catch(e){}}
 try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
@@ -1612,7 +1755,7 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       var any=false;
       for(var i=1;i<tds.length;i++){
         var sp=tds[i].querySelector('.shift:not(.dm)');       // 絞り込みで薄くなっているものは除外
-        if(sp){ cells.push({store:(sp.dataset.store||''),t:(sp.textContent||'').trim()}); any=true; }
+        if(sp){ cells.push({store:(sp.dataset.store||''),t:fmtShiftTime(sp.dataset.raw)}); any=true; }
         else cells.push(null);
       }
       if(any) rows.push({name:nm.trim(),cells:cells});
@@ -1703,7 +1846,7 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
         lx+=tw+34+12;
       });
       g.font='11px '+FONT; g.fillStyle='#8a7f96'; g.textAlign='right';
-      g.fillText('時刻＝出勤–退勤（18–23:30 は 18:00〜23:30）／ラスト＝閉店まで／翌4:00＝翌朝4:00　※変更になる場合があります',
+      g.fillText('時刻＝出勤–退勤（18–23:30 は 18:00〜23:30）／L＝閉店まで／翌4:00＝翌朝4:00　※変更になる場合があります',
                  W-M-PAD, ly+11);
       /* イベント情報（ポスター風に画像へも載せる） */
       var evs=[].slice.call(document.querySelectorAll('#evList li')).map(function(li){

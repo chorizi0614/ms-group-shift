@@ -769,8 +769,83 @@ tbody td{text-align:center;vertical-align:middle;position:relative}
 }
 
 </style>
+<style id="mobile-public-20260908">
+/* Mobile-first public schedule. Natural page scrolling keeps text readable in X/Safari. */
+:root{--rowH:48px;--chip:13px;--nameF:14px;--nameW:104px;--dayMinW:120px;color-scheme:light}
+html{overflow:auto;scroll-behavior:auto}
+body{display:block;height:auto;min-height:100vh;min-height:100svh;overflow:visible;background:#faf7fb;color:#362e40}
+body,button,input{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,sans-serif}
+button,a,input{-webkit-tap-highlight-color:rgba(160,99,150,.15)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #76568e;outline-offset:3px}
+button{touch-action:manipulation}
+[hidden]{display:none!important}
+header{position:relative;background:#faf7fb}
+.logo-band{padding:calc(12px + env(safe-area-inset-top)) 16px 10px;gap:12px;background:linear-gradient(120deg,#f2e7f7,#fceef3)}
+.ms-logo{height:36px}.header-title{font-size:17px;font-weight:700;letter-spacing:2px;color:#514059}.header-period{font-size:12px;letter-spacing:.5px;color:#6c5874;margin-top:5px}
+.filter-row{padding:10px 12px;gap:6px;background:#faf7fb;max-width:720px;margin:auto;border:0}
+.ftab{min-height:48px;min-width:0;padding:5px 2px;gap:4px;box-shadow:none!important}
+.ftab-logo{height:17px;max-width:52px}.ftab-name{font-size:10px;letter-spacing:0;opacity:1;line-height:1.2}.ftab.is-all{font-size:12px}
+.ftab.is-L,.ftab.is-M,.ftab.is-Y{color:#57495e}.ftab.is-all.active{color:#4d385e}
+.ftab[aria-pressed="true"]{border-width:2px}
+.view-tabs{display:flex;gap:4px;padding:4px;background:#eee7f1;border-radius:14px;margin:0 12px 10px}
+.view-tabs button{flex:1;border:0;background:transparent;color:#73627e;font-size:14px;font-weight:700;min-height:44px;border-radius:10px}
+.view-tabs button[aria-pressed="true"]{background:#fff;color:#674b7d;box-shadow:0 2px 7px #5b426514}
+.nav-row{padding:6px 12px;gap:16px;background:transparent;border:0}.nav-btn{width:44px;height:44px;font-size:25px;color:#71466d;background:#f7eaf3}
+#navLabel{font-size:16px;color:#4c3957;min-width:130px}
+.hintbar{padding:4px 12px 10px;font-size:12px;color:#6d5c78;background:transparent;border:0;gap:8px}
+.hintbar>span:not(.fetch-info){display:none}
+.fetch-info{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;font-size:12px;color:#685870;line-height:1.6;white-space:normal!important}
+.fetch-info button{min-height:44px;min-width:64px;font-size:13px;border-radius:12px;padding:6px 10px;color:#70426b}
+.update-note{color:#5f506a}.update-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#589276;margin-right:5px}
+#notice{max-width:696px;margin:8px auto;padding:14px 16px;font-size:14px;line-height:1.7}
+.daily-view{max-width:720px;padding:4px 12px 24px;margin:auto}
+.day-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 16px}
+.quick-days{display:flex;gap:6px;flex:1}
+.quick-days button,.date-field{min-height:44px;border:1px solid #ddd0e4;border-radius:12px;background:#fff;color:#624c70}
+.quick-days button{font-size:14px;padding:9px 17px;font-weight:700}
+.quick-days button[aria-pressed="true"]{background:#755a88;border-color:#755a88;color:white}
+.date-field{display:flex;align-items:center;gap:6px;padding:0 10px;font-size:12px}
+.date-field input{min-width:0;width:141px;min-height:44px;border:0;background:transparent;color:#51405f;font-size:16px}
+.day-heading{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px 10px;margin:4px 0 6px}
+.day-heading h1{font-size:23px;letter-spacing:.3px;color:#49334f;line-height:1.5}.day-heading span{font-size:13px;color:#765b7b}
+.day-description{font-size:13px;color:#74627c;line-height:1.7;margin-bottom:18px}
+.store-section{margin:0 0 20px}
+.store-heading{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:700;margin:0 0 9px;line-height:1.7}
+.store-heading img{width:27px;height:27px;object-fit:contain}.store-heading small{margin-left:auto;font-size:12px;font-weight:400;color:#76667c}
+.cast-cards{display:grid;gap:8px;list-style:none}
+.cast-card{display:flex;align-items:center;gap:12px;min-height:80px;padding:13px 14px;background:#fff;border:1px solid #e9dfeb;border-left:4px solid var(--accent);border-radius:15px;box-shadow:0 3px 10px #5d365308}
+.store-L{--accent:#60bdce}.store-M{--accent:#dc84ba}.store-Y{--accent:#a399bd}
+.cast-card-info{flex:1;min-width:0}.cast-card-name{display:block;font-size:17px;font-weight:700;line-height:1.6;overflow-wrap:anywhere;color:#43334b}
+.cast-card-time{font-size:16px;font-weight:500;line-height:1.7;color:#6b5176;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.cast-x{display:flex;align-items:center;justify-content:center;flex:none;width:44px;min-height:44px;text-decoration:none;border:1px solid #e5dae9;border-radius:12px;background:#faf7fc;color:#59485f;font-size:18px}
+.empty-day{padding:18px;background:#f3edf6;border:1px dashed #d9cddd;border-radius:14px;font-size:14px;line-height:1.8;color:#73617c}
+.change-message{padding:12px 14px;border-radius:12px;background:#fff2dd;color:#72511f;font-size:13px;line-height:1.7;margin:10px 12px;max-width:696px}
+.table-tools{max-width:720px;margin:4px auto 10px;padding:0 12px;display:flex;align-items:center;gap:12px;justify-content:space-between}
+.table-tools p{font-size:12px;color:#705e7b;line-height:1.6}.table-tools button{flex:none;min-height:44px;border:1px solid #d9c9e3;border-radius:12px;background:white;color:#694d7c;padding:8px 12px;font-size:13px;font-weight:700}
+.table-wrap{width:100%;flex:none;height:auto;max-height:66vh;max-height:66svh;min-height:140px;overflow:auto;border-block:1px solid #ded2e5;background:#fff;-webkit-overflow-scrolling:touch}
+.table-wrap table{min-width:calc(var(--nameW) + 120px * var(--dayCols));background:#fff}
+.table-wrap thead{top:0}.table-wrap thead th,.table-wrap tbody td:first-child{background:#faf7fc}
+tbody td,tbody td:first-child{height:48px;line-height:1.5}tbody tr{border-bottom:1px solid #ece3ef}
+.c-name{font-size:14px}.c-name a{min-height:44px;display:inline-flex;align-items:center;color:#4c3b58}.c-name a::after{font-size:10px;opacity:.6}
+.shift{font-size:13px;line-height:1.4;padding:5px 4px;letter-spacing:0;border-radius:9px;max-width:calc(100% - 4px)}.shift.dm{display:none!important}
+.th-d{font-size:14px;height:26px}.th-w{font-size:12px;height:20px}#dRow th:first-child{height:26px;font-size:13px}
+#stickyDates{display:none!important}
+.bottom-section{display:block;max-width:720px;margin:0 auto;background:transparent;border:0;padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
+.ev-card{min-width:0;margin-bottom:14px;padding:14px;background:#fff;border-color:#e3d8e7}.ev-head{font-size:14px;margin-bottom:8px;letter-spacing:1px}
+#evList{display:flex;gap:8px}#evList li{font-size:13px!important;color:#665172!important;line-height:1.7}.ev-date{font-size:13px}
+.legend{gap:8px;margin-bottom:12px}.legend .lg-name{font-size:12px;color:#65516e}.tm-legend{font-size:12px;line-height:1.8;color:#74627c}
+#saveImgBtn{position:static!important;display:flex!important;min-height:44px;font-size:13px;margin:16px auto;background:#fff;color:#684c76;box-shadow:none;padding:10px 18px;border:1px solid #d8c8e3}
+body.day-mode .table-wrap,body.day-mode .nav-row,body.day-mode .table-tools,body.day-mode #saveImgBtn,body.day-mode .legend{display:none!important}
+body.table-mode .daily-view{display:none}
+.share-link-row{max-width:720px;padding:4px 12px 16px;margin:auto;text-align:center}.share-link-row button{font-size:13px;min-height:44px;padding:10px 15px;border-radius:12px;background:#f2eaf5;color:#654d74;border:1px solid #ddd0e5}.share-link-row p{font-size:12px;color:#75627e;line-height:1.7;margin-top:6px}
+.copy-url{display:block;width:100%;margin-top:8px;padding:10px;font-size:16px;color:#4c365a;border:1px solid #d9cadd;border-radius:8px}
+@media(min-width:720px){.view-tabs{max-width:696px;margin:0 auto 10px}.cast-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-row{padding-inline:12px}.ftab-name{font-size:12px}.ftab-logo{height:22px}.ftab{min-height:56px}.change-message{margin-inline:auto}}
+@media(max-width:360px){.day-controls{gap:6px;flex-wrap:nowrap}.quick-days{flex:0 0 auto;gap:4px}.quick-days button{padding:9px 11px;min-width:48px}.date-field{min-width:0;flex:1;gap:2px;padding:0 6px}.date-field input{width:128px;font-size:16px}.day-heading h1{font-size:21px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style>
 </head>
-<body>
+<body class="day-mode">
 
 <header>
   <div class="logo-band">
@@ -802,6 +877,10 @@ tbody td{text-align:center;vertical-align:middle;position:relative}
     </button>
   </div>
 
+  <div class="view-tabs" role="group" aria-label="表示の切り替え">
+    <button type="button" data-view="day" aria-pressed="true">日別で見る</button>
+    <button type="button" data-view="table" aria-pressed="false">半月表で見る</button>
+  </div>
   <div class="nav-row">
     <button class="nav-btn" onclick="go(-1)" aria-label="前の期間">&#8249;</button>
     <span id="navLabel"></span>
@@ -814,7 +893,18 @@ tbody td{text-align:center;vertical-align:middle;position:relative}
   <span id="fetchInfo" class="fetch-info"></span>
 </div>
 
-<div id="notice" hidden></div>
+<div id="notice" role="status" hidden></div>
+<p id="changeMessage" class="change-message" role="status" hidden></p>
+<main class="daily-view" id="dailyView">
+  <div class="day-controls">
+    <div class="quick-days" id="quickDays" role="group" aria-label="日付の切り替え"></div>
+    <label class="date-field">日付 <input type="date" id="dayPicker" aria-label="お給仕の日付"></label>
+  </div>
+  <div class="day-heading"><h1 id="dayTitle"></h1><span id="daySubtitle"></span></div>
+  <p class="day-description" id="dayDescription"></p>
+  <div id="dayCards"></div>
+</main>
+<div class="table-tools"><p>横にスワイプで日付を移動<br>名前をタップで X を確認</p><button type="button" id="latestDay">今日の予定へ</button></div>
 
 
 <div id="todayPanel" class="today-panel">
@@ -840,11 +930,16 @@ tbody td{text-align:center;vertical-align:middle;position:relative}
   </table>
 </div>
 
-<button class="cmp-btn" id="saveImgBtn" onclick="saveImage()" style="bottom:64px">📷 画像保存</button>
+<button class="cmp-btn" id="saveImgBtn" onclick="saveImage()" style="bottom:64px">📷 半月表を画像保存</button>
 <button class="cmp-btn on" id="cmpBtn" onclick="toggleCompact()">
   <span class="cmp-icon">⊟</span>通常表示
 </button>
 
+<div class="share-link-row">
+  <button type="button" id="copyStoreLink">このシフトのリンクをコピー</button>
+  <p id="copyStatus" role="status">いつ開いても、最新の予定が見られるリンクです。</p>
+  <input class="copy-url" id="copyUrl" readonly aria-label="最新シフトのURL" hidden>
+</div>
 <div class="bottom-section">
   <div class="ev-card">
     <div class="ev-head">🎀 イベント情報</div>
@@ -881,113 +976,6 @@ const CONFIG = {
   },
 };
 
-/* =====================================================
-   SAMPLE DATA  (6月前半 — 実データ)
-   [name, day, store, time, photo, xid]
-===================================================== */
-const SAMPLE = {
-'2026-6': [
-  ['はお',1,'L','19-23','c_69f649ff0bae7.png','holuv__'],
-  ['なこ',1,'Y','18-L','c_69f64a24c67c2.png','nako_lily_'],
-  ['しゅらん',1,'Y','18-24','c_69f64a1d32007.png','syuran_oxo'],
-  ['うに',1,'Y','18-23','c_6a1740f46067a.png','chuunl__'],
-  ['えま',1,'L','19-L','c_6a146bfc1831e.png','tottemo_emma'],
-  ['りり',2,'M','18-23','c_69f64a06a7e7e.png','ririchanng'],
-  ['はお',2,'L','20-23','c_69f649ff0bae7.png','holuv__'],
-  ['める',2,'L','18-23','c_69f88e7fba90c.png','uxozln'],
-  ['ろん',2,'Y','18-23','c_69f64a8b26919.png','Ronronprin26'],
-  ['あっと',2,'Y','18-23','c_69f64a13b49d0.png','Atto_xx0'],
-  ['うに',2,'L','18-23','c_6a1740f46067a.png','chuunl__'],
-  ['せいら',2,'M','18-L','c_69f649f163eb6.png','_nylzq'],
-  ['あむ',3,'L','18-L','c_6a146bf66d22d.png','amunisitagae'],
-  ['なこ',3,'Y','18-L','c_69f64a24c67c2.png','nako_lily_'],
-  ['める',3,'Y','18-23','c_69f88e7fba90c.png','uxozln'],
-  ['しゅらん',3,'Y','18-24','c_69f64a1d32007.png','syuran_oxo'],
-  ['えま',3,'L','18-L','c_6a146bfc1831e.png','tottemo_emma'],
-  ['しゃる',3,'M','18-23','c_6a213bad6699c.png','shqruchqn'],
-  ['せいら',3,'M','18-L','c_69f649f163eb6.png','_nylzq'],
-  ['あむ',4,'L','18-L','c_6a146bf66d22d.png','amunisitagae'],
-  ['うに',4,'L','18-23','c_6a1740f46067a.png','chuunl__'],
-  ['えま',4,'L','18-L','c_6a146bfc1831e.png','tottemo_emma'],
-  ['あむ',5,'L','20-L','c_6a146bf66d22d.png','amunisitagae'],
-  ['りり',5,'M','19-24','c_69f64a06a7e7e.png','ririchanng'],
-  ['はお',5,'Y','18-23','c_69f649ff0bae7.png','holuv__'],
-  ['なこ',5,'Y','18-L','c_69f64a24c67c2.png','nako_lily_'],
-  ['ねむち',5,'Y','18-L','c_69f64a4c91584.png','nem_chi_zzz'],
-  ['める',5,'L','18-L','c_69f88e7fba90c.png','uxozln'],
-  ['るる',5,'M','18-L','c_69f64a45d5e56.png','ruru_chaxxx_xxx'],
-  ['あっと',5,'Y','18-L','c_69f64a13b49d0.png','Atto_xx0'],
-  ['ぷり',5,'M','19-L','c_69f64a2baf294.png','pre_s2_o6'],
-  ['うに',5,'M','19-23','c_6a1740f46067a.png','chuunl__'],
-  ['えま',5,'L','18-L','c_6a146bfc1831e.png','tottemo_emma'],
-  ['せいら',5,'L','19-L','c_69f649f163eb6.png','_nylzq'],
-  ['りり',6,'L','19-24','c_69f64a06a7e7e.png','ririchanng'],
-  ['はお',6,'Y','18-L','c_69f649ff0bae7.png','holuv__'],
-  ['なこ',6,'Y','18-L','c_69f64a24c67c2.png','nako_lily_'],
-  ['める',6,'L','18-L','c_69f88e7fba90c.png','uxozln'],
-  ['しゅらん',6,'L','18-L','c_69f64a1d32007.png','syuran_oxo'],
-  ['るる',6,'L','18-23.5','c_69f64a45d5e56.png','ruru_chaxxx_xxx'],
-  ['あっと',6,'M','18-L','c_69f64a13b49d0.png','Atto_xx0'],
-  ['ぷり',6,'M','18-L','c_69f64a2baf294.png','pre_s2_o6'],
-  ['えま',6,'Y','18-L','c_6a146bfc1831e.png','tottemo_emma'],
-  ['かのの',6,'M','18-24','c_6a1740ee2918a.png','8XZkZ66ERQ77272'],
-  ['せいら',6,'Y','20-L','c_69f649f163eb6.png','_nylzq'],
-  ['なこ',7,'L','18-L','c_69f64a24c67c2.png','nako_lily_'],
-  ['かのの',7,'L','18-23','c_6a1740ee2918a.png','8XZkZ66ERQ77272'],
-  ['める',8,'L','18-23','c_69f88e7fba90c.png','uxozln'],
-  ['しゅらん',8,'L','18-24','c_69f64a1d32007.png','syuran_oxo'],
-  ['えま',8,'L','18-23','c_6a146bfc1831e.png','tottemo_emma'],
-  ['あむ',9,'L','18-L','c_6a146bf66d22d.png','amunisitagae'],
-  ['りり',9,'M','18-23','c_69f64a06a7e7e.png','ririchanng'],
-  ['はお',9,'M','20-23','c_69f649ff0bae7.png','holuv__'],
-  ['なこ',9,'Y','18-L','c_69f64a24c67c2.png','nako_lily_'],
-  ['ろん',9,'L','18-23','c_69f64a8b26919.png','Ronronprin26'],
-  ['あっと',9,'L','19-23','c_69f64a13b49d0.png','Atto_xx0'],
-  ['うに',9,'M','18-23','c_6a1740f46067a.png','chuunl__'],
-  ['えま',9,'L','18-23','c_6a146bfc1831e.png','tottemo_emma'],
-  ['めぅ',9,'L','18-L','',''],
-  ['あむ',10,'L','18-L','c_6a146bf66d22d.png','amunisitagae'],
-  ['はお',10,'M','18-22','c_69f649ff0bae7.png','holuv__'],
-  ['める',10,'L','18-23','c_69f88e7fba90c.png','uxozln'],
-  ['ぷり',10,'M','18-L','c_69f64a2baf294.png','pre_s2_o6'],
-  ['えま',10,'L','18-23','c_6a146bfc1831e.png','tottemo_emma'],
-  ['しゃる',10,'L','18-23','c_6a213bad6699c.png','shqruchqn'],
-  ['はお',11,'Y','19-23','c_69f649ff0bae7.png','holuv__'],
-  ['なこ',11,'Y','18-L','c_69f64a24c67c2.png','nako_lily_'],
-  ['める',11,'M','18-23','c_69f88e7fba90c.png','uxozln'],
-  ['しゅらん',11,'L','18-24','c_69f64a1d32007.png','syuran_oxo'],
-  ['あっと',11,'L','18-L','c_69f64a13b49d0.png','Atto_xx0'],
-  ['うに',11,'Y','18-23','c_6a1740f46067a.png','chuunl__'],
-  ['えま',11,'M','18-23','c_6a146bfc1831e.png','tottemo_emma'],
-  ['あむ',12,'L','18-L','c_6a146bf66d22d.png','amunisitagae'],
-  ['りり',12,'M','19-24','c_69f64a06a7e7e.png','ririchanng'],
-  ['はお',12,'Y','18-23','c_69f649ff0bae7.png','holuv__'],
-  ['ねむち',12,'M','18-L','c_69f64a4c91584.png','nem_chi_zzz'],
-  ['める',12,'Y','18-L','c_69f88e7fba90c.png','uxozln'],
-  ['ろん',12,'M','18-L','c_69f64a8b26919.png','Ronronprin26'],
-  ['うに',12,'L','18-23','c_6a1740f46067a.png','chuunl__'],
-  ['めぅ',12,'Y','18-L','',''],
-  ['りり',13,'M','19-24','c_69f64a06a7e7e.png','ririchanng'],
-  ['はお',13,'L','18-L','c_69f649ff0bae7.png','holuv__'],
-  ['なこ',13,'Y','18-L','c_69f64a24c67c2.png','nako_lily_'],
-  ['ねむち',13,'M','18-L','c_69f64a4c91584.png','nem_chi_zzz'],
-  ['める',13,'L','18-L','c_69f88e7fba90c.png','uxozln'],
-  ['しゅらん',13,'L','18-23.5','c_69f64a1d32007.png','syuran_oxo'],
-  ['あっと',13,'Y','18-L','c_69f64a13b49d0.png','Atto_xx0'],
-  ['ぷり',13,'Y','18-L','c_69f64a2baf294.png','pre_s2_o6'],
-  ['うに',13,'L','18-23','c_6a1740f46067a.png','chuunl__'],
-  ['えま',13,'M','18-23','c_6a146bfc1831e.png','tottemo_emma'],
-  ['めぅ',13,'M','18-L','',''],
-  ['ひめ',13,'Y','18-L','c_69f88e8a1e019.png','himenyqsama'],
-  ['なこ',14,'L','18-L','c_69f64a24c67c2.png','nako_lily_'],
-  ['ねむち',14,'L','19-L','c_69f64a4c91584.png','nem_chi_zzz'],
-  ['あむ',15,'L','18-L','c_6a146bf66d22d.png','amunisitagae'],
-  ['しゅらん',15,'M','18-24','c_69f64a1d32007.png','syuran_oxo'],
-  ['あっと',15,'Y','18-L','c_69f64a13b49d0.png','Atto_xx0'],
-  ['ぷり',15,'Y','18-L','c_69f64a2baf294.png','pre_s2_o6'],
-  ['えま',15,'L','18-L','c_6a146bfc1831e.png','tottemo_emma'],
-  ['しゃる',15,'M','18-23','c_6a213bad6699c.png','shqruchqn'],
-]};
 
 /* =====================================================
    STATE
@@ -1051,7 +1039,7 @@ function fmtShiftTime(raw, long){
   return A+'–'+one(b,next);
 }
 
-function detectPeriod(){const n=new Date();return{y:n.getFullYear(),m:n.getMonth()+1,h:n.getDate()<=15?1:2}}
+function detectPeriod(){return dayPeriod(businessDay())}
 function periodKey(p){return p.y+'-'+p.m}
 function periodLabel(p){return MO_J[p.m]+(p.h===1?' 前半（1〜15日）':' 後半（16〜末日）')}
 function navLabel(p){return p.y+'/'+String(p.m).padStart(2,'0')+(p.h===1?' 前半':' 後半')}
@@ -1059,7 +1047,7 @@ function go(d){
   let{y,m,h}=curPeriod; h+=d;
   if(h>2){h=1;m++} if(h<1){h=2;m--}
   if(m>12){m=1;y++} if(m<1){m=12;y--}
-  curPeriod={y,m,h}; loadAndRender(curPeriod);
+  curPeriod={y,m,h};initialTableScroll=false;changeMessage='';document.getElementById('changeMessage').hidden=true;document.querySelector('.table-wrap').scrollLeft=0;loadAndRender(curPeriod);
 }
 
 /* =====================================================
@@ -1068,7 +1056,7 @@ function go(d){
 async function loadSheet(key){
   const[y,mo]=key.split('-');
   const month=y+'-'+mo.padStart(2,'0');
-  const r=await fetch(CONFIG.PHP_URL+'?month='+month);
+  const r=await fetchPublic(CONFIG.PHP_URL+'?month='+month);
   if(!r.ok) throw new Error('HTTP '+r.status);
   const data=await r.json();
   if(!Array.isArray(data)) throw new Error('invalid');
@@ -1091,7 +1079,7 @@ function setStatus(cls,txt){
    ※ 従来の .status-bar は上書きCSSで display:none のため、
      利用者からは取得状況がまったく見えていなかった。
 ===================================================== */
-function clockHM(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function clockHM(d){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(d)}
 
 function setFetchInfo(state){
   const save=document.getElementById('saveImgBtn');
@@ -1105,10 +1093,10 @@ function setFetchInfo(state){
     el.innerHTML='⚠️ 取得できません（最終取得 '+stamp+'）<button type="button" id="reloadBtn">再取得</button>';
   }else{
     el.className='fetch-info';
-    el.innerHTML='🕒 最終取得 '+stamp+'<button type="button" id="reloadBtn">再取得</button>';
+    el.innerHTML='<span><span class="update-dot"></span>5分ごと自動更新<br>最終取得 '+stamp+'（日本時間）</span><button type="button" id="reloadBtn">再取得</button>';
   }
   const b=document.getElementById('reloadBtn');
-  if(b) b.onclick=function(){ loadAndRender(curPeriod); };
+  if(b) b.onclick=refreshPublic;
 }
 
 function setNotice(kind,period){
@@ -1169,7 +1157,7 @@ function render(period, allRows){
   const{y,m,h}=period;
   const daysInMonth=new Date(y,m,0).getDate();
   const startDay=h===1?1:16, endDay=h===1?15:daysInMonth;
-  const todayD=(()=>{const n=new Date();return(n.getFullYear()===y&&n.getMonth()+1===m)?n.getDate():-1})();
+  const todayD=(()=>{const p=businessDay().split('-').map(Number);return(p[0]===y&&p[1]===m)?p[2]:-1})();
 
   /* 日付列の本数を CSS に渡す（表の最低幅＝名前列＋日数×1列の最低幅）*/
   document.documentElement.style.setProperty('--dayCols',String(endDay-startDay+1));
@@ -1322,6 +1310,11 @@ function setFilter(store,btn){
   document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
   applyFilter(store);
+  try{localStorage.setItem('ms-public-store',STORE_SLUGS[store]||'all');}catch(e){}
+  changeMessage='';document.getElementById('changeMessage').hidden=true;
+  updateTabs();renderDaily();syncLink();
+  document.getElementById('copyStatus').textContent='いつ開いても、最新の予定が見られるリンクです。';
+  document.getElementById('copyUrl').hidden=true;
 }
 
 /* =====================================================
@@ -1331,11 +1324,18 @@ async function loadEvents(period){
   try{
     const[y,mo]=periodKey(period).split('-');
     const month=y+'-'+mo.padStart(2,'0');
-    const r=await fetch(CONFIG.EVENTS_URL+'?month='+month,{cache:'no-store'});
+    const r=await fetchPublic(CONFIG.EVENTS_URL+'?month='+month,6000);
     if(!r.ok) return;
     const data=await r.json();
     if(Array.isArray(data)) CONFIG.EVENTS_BY_MONTH[periodKey(period)]=data;
   }catch(e){ console.warn('events fetch',e); }
+}
+
+async function fetchPublic(url,timeout=12000){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeout);
+  try{return await fetch(url,{cache:'no-store',signal:controller.signal});}
+  finally{clearTimeout(timer);}
 }
 
 async function loadAndRender(period){
@@ -1343,11 +1343,14 @@ async function loadAndRender(period){
   setStatus('ld','読み込み中…');
   setFetchInfo('loading');
   const key=periodKey(period);
-  location.hash=period.y+'-'+period.m+'-'+period.h;
-  await loadEvents(period);
+  syncLink();
+  publicState='loading';renderDaily();
+  const events=loadEvents(period);
   try{
     const rows=await loadSheet(key);
+    await events;
     if(generation!==loadGeneration)return;
+    reportChanges(rows,key);publicRows=rows;publicMonth=key;publicState='ok';
     render(period,rows);
     renderToday(rows);
     lastOkAt=new Date();
@@ -1355,10 +1358,12 @@ async function loadAndRender(period){
     /* 取得はできたが、この期間の行が0件＝まだ公開されていない
        （通信エラーとも「お休み」とも別の状態として案内する）*/
     setNotice(document.querySelectorAll('#tBody tr').length?'':'unpublished',period);
-    setFetchInfo('ok');
+    if(viewMode==='day')setNotice('');
+    setFetchInfo('ok');renderDaily();updateTabs();
+    if(viewMode==='table'&&initialTableScroll){initialTableScroll=false;requestAnimationFrame(scrollToSelectedDay);}
   } catch(e){
     if(generation!==loadGeneration)return;
-    console.warn(e);
+    console.warn(e);publicState='error';
     /* 通信エラー時にサンプルデータ(6月)へ差し替えると、別の月の予定を
        本物として見せてしまう。状態表示バーも非表示のため気づけない。
        → 差し替えはやめ、エラーであることと最終取得時刻・再取得を出す。
@@ -1368,7 +1373,7 @@ async function loadAndRender(period){
     if(!keepTable){ render(period,[]); renderToday([]); }
     setStatus('err','読み込みエラー');
     setNotice('error',period);
-    setFetchInfo('error');
+    setFetchInfo('error');renderDaily();
   }
 }
 
@@ -1390,119 +1395,148 @@ function toggleCompact(){
 function periodFromHash(){
   const h=location.hash.replace('#','');
   const m=h.match(/^(\d{4})-(\d{1,2})-([12])$/);
-  return m?{y:+m[1],m:+m[2],h:+m[3]}:null;
+  return m&&+m[2]>=1&&+m[2]<=12?{y:+m[1],m:+m[2],h:+m[3]}:null;
 }
-curPeriod=periodFromHash()||detectPeriod();
-loadAndRender(curPeriod);
-setInterval(()=>loadAndRender(curPeriod),5*60*1000);
+/* Daily public view: uses the same read-only monthly feed as the half-month table. */
+const STORE_NAMES={L:'Linaria',M:"I's Melty",Y:'Lily Maid'};
+const STORE_SLUGS={L:'linaria',M:'ismelty',Y:'lily'};
+let publicRows=[], publicMonth='', publicState='loading', changeMessage='';
+let selectedDay='', viewMode='day', followToday=true, initialTableScroll=true;
+function jstNow(now=new Date()){
+  return new Date(now.getTime()+9*60*60*1000);
+}
+function dateKey(d){return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0')}
+function validDay(s){return /^\d{4}-\d{2}-\d{2}$/.test(s)&&!isNaN(Date.parse(s+'T12:00:00Z'))&&dateKey(new Date(s+'T12:00:00Z'))===s}
+function shiftDay(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return dateKey(d)}
+function businessDay(now=new Date()){
+  const d=jstNow(now); if(d.getUTCHours()<5)d.setUTCDate(d.getUTCDate()-1); return dateKey(d);
+}
+function dayPeriod(day){const p=day.split('-').map(Number);return {y:p[0],m:p[1],h:p[2]<=15?1:2}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function shortDate(s){const d=new Date(s+'T12:00:00Z');return (d.getUTCMonth()+1)+'月'+d.getUTCDate()+'日（'+WD[d.getUTCDay()]+'）'}
+function syncLink(){
+  const u=new URL(location.href);
+  if(activeFilter==='all')u.searchParams.set('store','all');else u.searchParams.set('store',STORE_SLUGS[activeFilter]);
+  u.searchParams.delete('date');u.searchParams.delete('view');u.hash='';
+  if(viewMode==='table'){u.searchParams.set('view','table');u.hash=curPeriod.y+'-'+curPeriod.m+'-'+curPeriod.h;}
+  else if(!followToday)u.searchParams.set('date',selectedDay);
+  history.replaceState(null,'',u);
+}
+function updateTabs(){
+  document.body.classList.toggle('day-mode',viewMode==='day');
+  document.body.classList.toggle('table-mode',viewMode==='table');
+  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===viewMode)));
+  document.querySelectorAll('.ftab').forEach(b=>{const on=b.dataset.store===activeFilter;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
+  if(viewMode==='table'&&curPeriod){document.getElementById('titlePeriod').textContent=periodLabel(curPeriod);document.title=navLabel(curPeriod)+' お給仕予定 | '+(STORE_NAMES[activeFilter]||'MS Group');}
+}
+function selectView(mode){
+  viewMode=mode;updateTabs();
+  if(mode==='day')selectDay(businessDay(),true);
+  else {syncLink(); renderDaily();requestAnimationFrame(scrollToSelectedDay);}
+}
+function selectDay(day,follow=false){
+  if(!validDay(day))return;
+  changeMessage='';document.getElementById('changeMessage').hidden=true;
+  selectedDay=day;followToday=follow;curPeriod=dayPeriod(day);syncLink();
+  if(publicMonth===periodKey(curPeriod)&&publicState==='ok'){
+    render(curPeriod,publicRows);renderDaily();setNotice('');setFetchInfo('ok');
+  }else loadAndRender(curPeriod);
+}
+function scrollToSelectedDay(){
+  const tw=document.querySelector('.table-wrap');
+  const p=dayPeriod(selectedDay);
+  if(p.y!==curPeriod.y||p.m!==curPeriod.m||p.h!==curPeriod.h)return;
+  const day=Number(selectedDay.slice(-2)),idx=day-(curPeriod.h===1?1:16)+1;
+  const th=document.querySelectorAll('.table-wrap #dRow th')[idx];
+  if(th)tw.scrollLeft=Math.max(0,th.offsetLeft-document.querySelector('.table-wrap #dRow th').offsetWidth);
+}
+function renderDaily(){
+  const now=dateKey(jstNow()),biz=businessDay();
+  const quick=document.getElementById('quickDays');
+  const choices=biz!==now?[[biz,'昨夜'],[now,'今日']]:[[now,'今日'],[shiftDay(now,1),'明日']];
+  quick.replaceChildren();
+  choices.forEach(([d,label])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-pressed',String(d===selectedDay));b.onclick=()=>selectDay(d,d===biz);quick.appendChild(b)});
+  document.getElementById('dayPicker').value=selectedDay;
+  document.getElementById('dayTitle').textContent=shortDate(selectedDay);
+  document.getElementById('daySubtitle').textContent=selectedDay===now?'今日のお給仕':selectedDay===biz&&biz!==now?'昨夜から翌朝の予定':'お給仕予定';
+  document.getElementById('dayDescription').textContent=selectedDay===biz&&biz!==now?'午前5時までは前日の営業分。今夜の予定は「今日」から。':'時間は出勤〜退勤の予定です。𝕏 からキャストのアカウントへ。';
+  if(viewMode==='day'){
+    document.getElementById('titlePeriod').textContent='リアルタイムシフト';
+    document.title=shortDate(selectedDay)+' お給仕予定 | '+(STORE_NAMES[activeFilter]||'MS Group');
+  }
+  const body=document.getElementById('dayCards');
+  const hasData=publicMonth===periodKey(dayPeriod(selectedDay));
+  if(!hasData){body.innerHTML='<p class="empty-day">'+(publicState==='error'?'シフトを取得できませんでした。上の「再取得」をお試しください。':'お給仕予定を読み込んでいます…')+'</p>';return;}
+  const rows=publicRows.filter(r=>Number(r[1])===Number(selectedDay.slice(-2))&&(activeFilter==='all'||r[2]===activeFilter));
+  const stores=activeFilter==='all'?['L','M','Y']:[activeFilter];
+  body.replaceChildren();
+  stores.forEach(store=>{
+    const list=rows.filter(r=>r[2]===store).sort((a,b)=>String(a[3]).localeCompare(String(b[3]))||a[0].localeCompare(b[0],'ja'));
+    const section=document.createElement('section');section.className='store-section store-'+store;
+    const heading=document.createElement('h2');heading.className='store-heading';
+    heading.innerHTML='<img src="'+CONFIG.STORE_LOGO[store]+'" alt="">'+STORE_NAMES[store]+'<small>'+list.length+'名の予定</small>';
+    section.appendChild(heading);
+    if(!list.length){const p=document.createElement('p');p.className='empty-day';p.textContent='この日の公開シフトはありません。未公開・お休みの場合があります。';section.appendChild(p);}
+    else{
+      const ul=document.createElement('ul');ul.className='cast-cards';
+      list.forEach(([name,,st,time,photo,xid])=>{
+        const li=document.createElement('li');li.className='cast-card';
+        li.innerHTML='<div class="cast-card-info"><span class="cast-card-name">'+esc(name)+'</span><span class="cast-card-time">'+esc(fmtShiftTime(time,true))+'</span></div>';
+        if(/^[A-Za-z0-9_]{1,15}$/.test(xid||'')){
+          const a=document.createElement('a');a.className='cast-x';a.href='https://x.com/'+xid;a.target='_blank';a.rel='noopener noreferrer';a.textContent='𝕏';a.setAttribute('aria-label',name+'のXを開く');a.dataset.castName=name;li.appendChild(a);
+        }ul.appendChild(li);
+      });section.appendChild(ul);
+    }body.appendChild(section);
+  });
+}
+function reportChanges(rows,key){
+  if(publicMonth===key&&publicRows.length){
+    const relevant=arr=>new Map(arr.filter(r=>(activeFilter==='all'||r[2]===activeFilter)&&(viewMode==='day'?Number(r[1])===Number(selectedDay.slice(-2)):(curPeriod.h===1?Number(r[1])<=15:Number(r[1])>15))).map(r=>[r[0]+'|'+r[1],r[2]+'|'+r[3]]));
+    const a=relevant(publicRows),b=relevant(rows);let n=0;
+    new Set([...a.keys(),...b.keys()]).forEach(k=>{if(a.get(k)!==b.get(k))n++});
+    if(n)changeMessage='表示中の予定に'+n+'件の変更がありました。出勤日・時間をもう一度ご確認ください。';
+  }
+  const el=document.getElementById('changeMessage');el.textContent=changeMessage;el.hidden=!changeMessage;
+}
+function refreshPublic(){
+  if(document.hidden)return;
+  if(viewMode==='day'&&followToday){selectedDay=businessDay();curPeriod=dayPeriod(selectedDay);}
+  loadAndRender(curPeriod);
+}
+async function copyStoreLink(){
+  const u=new URL(location.origin+location.pathname);
+  u.searchParams.set('store',STORE_SLUGS[activeFilter]||'all');
+  const input=document.getElementById('copyUrl');input.value=u.href;
+  try{if(!navigator.clipboard)throw new Error('clipboard unavailable');await navigator.clipboard.writeText(u.href);document.getElementById('copyStatus').textContent='コピーしました。いつ開いても最新の予定が表示されるリンクです。';input.hidden=true;}
+  catch(e){input.hidden=false;input.focus();input.select();document.getElementById('copyStatus').textContent='下のURLを長押ししてコピーできます。';}
+}
+function initPublicView(){
+  const u=new URL(location.href),slug=u.searchParams.get('store');
+  let stored='';try{stored=localStorage.getItem('ms-public-store')||'';}catch(e){}
+  activeFilter=Object.keys(STORE_SLUGS).find(k=>STORE_SLUGS[k]===(slug||stored))||'all';
+  selectedDay=validDay(u.searchParams.get('date')||'')?u.searchParams.get('date'):businessDay();
+  followToday=!u.searchParams.has('date');
+  const old=periodFromHash();
+  viewMode=(u.searchParams.get('view')==='table'||old)?'table':'day';
+  curPeriod=viewMode==='table'?(old||dayPeriod(selectedDay)):dayPeriod(selectedDay);
+  const tabs=document.querySelectorAll('.ftab');['all','L','M','Y'].forEach((s,i)=>tabs[i].dataset.store=s);
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>selectView(b.dataset.view));
+  document.getElementById('dayPicker').onchange=e=>{if(validDay(e.target.value))selectDay(e.target.value);};
+  document.getElementById('latestDay').onclick=()=>selectView('day');
+  document.getElementById('copyStoreLink').onclick=copyStoreLink;
+  updateTabs();renderDaily();syncLink();loadAndRender(curPeriod);
+  setInterval(refreshPublic,5*60*1000);
+  let returnedAt=Date.now();
+  function onReturn(){if(Date.now()-returnedAt<1000)return;returnedAt=Date.now();refreshPublic();}
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)onReturn()});
+  window.addEventListener('pageshow',e=>{if(e.persisted)onReturn()});
+}
+
+initPublicView();
 function hideHint(){var h=document.getElementById('tapHint');if(h)h.style.display='none';try{localStorage.setItem('hideTapHint','1');}catch(e){}}
 try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
 
-/* =====================================================
-   STICKY DATE HEADER (JS-driven, flicker-free)
-===================================================== */
-(function(){
-  const sticky=document.createElement('div');
-  sticky.id='stickyDates';
-  document.body.insertBefore(sticky,document.body.firstChild);
-
-  let built=false, widthsSynced=false, ticking=false, visible=false;
-  const GAP=5; // px hysteresis to prevent boundary flicker
-
-  // Always reference the ORIGINAL rows (not clones) to avoid id collision
-  function getOrigDRow(){ return document.querySelector('.table-wrap #dRow'); }
-
-  function build(){
-    const dRow=getOrigDRow();
-    const wRow=document.querySelector('.table-wrap #wRow');
-    if(!dRow||!wRow) return;
-    const tbl=document.createElement('table');
-    tbl.style.cssText='border-collapse:collapse;white-space:nowrap;table-layout:fixed';
-    const head=document.createElement('thead');
-    const cloneDRow=dRow.cloneNode(true);
-    const cloneWRow=wRow.cloneNode(true);
-    cloneDRow.removeAttribute('id'); // prevent id collision
-    cloneWRow.removeAttribute('id');
-    head.appendChild(cloneDRow);
-    head.appendChild(cloneWRow);
-    tbl.appendChild(head);
-    sticky.innerHTML='';
-    sticky.appendChild(tbl);
-    built=true; widthsSynced=false;
-  }
-
-  function syncWidths(){
-    if(widthsSynced) return;
-    const origRow=getOrigDRow();
-    if(!origRow||!built) return;
-    const origThs=origRow.querySelectorAll('th');
-    const cloneThs=sticky.querySelectorAll('tr:first-child th');
-    let total=0;
-    origThs.forEach((th,i)=>{
-      const w=th.getBoundingClientRect().width;
-      if(cloneThs[i]) cloneThs[i].style.width=w+'px';
-      total+=w;
-    });
-    const tbl=sticky.querySelector('table');
-    if(tbl&&total>0){tbl.style.width=total+'px'; widthsSynced=true;}
-  }
-
-  function syncScroll(){
-    if(!built) return;
-    const tw=document.querySelector('.table-wrap');
-    if(tw) sticky.scrollLeft=tw.scrollLeft;
-  }
-
-  function update(){
-    ticking=false;
-    const hdr=document.querySelector('header');
-    const dRow=getOrigDRow();
-    if(!hdr||!dRow) return;
-    const headerH=hdr.offsetHeight;
-    const top=dRow.getBoundingClientRect().top;
-
-    if(!visible && top<headerH-GAP){
-      // Show sticky
-      if(!built) build();
-      sticky.style.top=headerH+'px';
-      sticky.style.display='block';
-      visible=true;
-      syncWidths();
-      syncScroll();
-    } else if(visible && top>headerH+GAP){
-      // Hide sticky
-      sticky.style.display='none';
-      visible=false;
-    } else if(visible){
-      syncScroll();
-    }
-  }
-
-  function onScroll(){
-    if(!ticking){requestAnimationFrame(update);ticking=true;}
-  }
-
-  function onResize(){
-    built=false; widthsSynced=false; visible=false;
-    sticky.style.display='none';
-    requestAnimationFrame(update);
-  }
-
-  function attachTW(){
-    const tw=document.querySelector('.table-wrap');
-    if(tw) tw.addEventListener('scroll',syncScroll,{passive:true});
-  }
-
-  window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('resize',onResize);
-  attachTW();
-
-  document.addEventListener('click',e=>{
-    if(e.target.closest('.nav-btn')){
-      setTimeout(()=>{built=false;widthsSynced=false;attachTW();update();},450);
-    }
-  });
-})();
+/* Native sticky table header handles horizontal and vertical scrolling. */
 </script>
 
 
@@ -1625,8 +1659,7 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       g.font='12px '+FONT; g.globalAlpha=.92;
       /* いつ時点の予定かを画像にも残す（受け取った人が古い画像と区別できるように）*/
       var at=(typeof lastOkAt!=='undefined'&&lastOkAt)?lastOkAt:new Date();
-      var stamp='（'+(at.getMonth()+1)+'/'+at.getDate()+' '
-        +String(at.getHours()).padStart(2,'0')+':'+String(at.getMinutes()).padStart(2,'0')+' 時点）';
+      var stamp='（'+clockHM(at)+' 日本時間・取得）';
       g.fillText(per+"   Linaria ・ I's Melty ・ Lily Maid   "+stamp, M+22, M+BAN/2+13); g.globalAlpha=1;
       var cy0=M+BAN+14;
       g.save(); g.shadowColor='rgba(90,60,130,.16)'; g.shadowBlur=14; g.shadowOffsetY=3;
@@ -1723,76 +1756,21 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
 </script>
 
 <script>
-/* =====================================================
-   縦を1画面に収める（行の高さを自動計算）／横はスクロール可
-===================================================== */
-(function(){
-  function els(){return {
-    hd:document.querySelector('header'),
-    hint:document.querySelector('.hintbar'),
-    tw:document.querySelector('.table-wrap'),
-    tb:document.getElementById('tBody'),
-    bs:document.querySelector('.bottom-section'),
-    thead:document.querySelector('.table-wrap thead')
-  };}
-  function fit(){
-    var e=els(); if(!e.tw||!e.tb||!e.hd) return;
-    var rows=[].slice.call(e.tb.querySelectorAll('tr')).filter(function(t){return !t.classList.contains('rh');}).length;
-    if(!rows) return;
-    var st=document.documentElement.style;
-    function apply(rh){
-      st.setProperty('--rowH',rh+'px');
-      st.setProperty('--chip',Math.max(6.8,Math.min(11,Math.round(rh*0.34*10)/10))+'px');
-      st.setProperty('--nameF',Math.max(8.5,Math.min(13,Math.round(rh*0.42*10)/10))+'px');
-      /* 2026-09-07: 日付列の幅はここでは決めない。
-         CSS 側で「名前列＝固定幅／日付列＝残りを均等配分（最低幅は --chip から算出）」
-         にしたため、--dayW は使っていない。 */
-    }
-    /* v4: 高さの配分は body(flex) が決めるので、ここは「表の中をなるべくスクロール
-       せずに見せる」ための行の高さ調整だけ。イベント欄には一切触らない。 */
-    if(e.bs){ e.bs.style.maxHeight=''; e.bs.style.overflow=''; }
-    var VH=(window.visualViewport&&window.visualViewport.height)?window.visualViewport.height:window.innerHeight;
-    /* v5: アプリ内ブラウザ向けの決め打ち予約(92px)は廃止。visualViewport が
-       実際の可視領域を返すので、どのブラウザでもこれだけで正しい。 */
-    document.body.style.height=Math.max(320,VH)+'px';
-    apply(26);
-    var headH=e.thead?e.thead.offsetHeight:30;
-    var rh=Math.floor((e.tw.clientHeight-headH)/rows);
-    /* v6: 下限を 13px まで下げる。Xやアプリメンバーズは上下にバーがある分
-       表示領域が狭いので、20px固定だと表が下で切れて全員分入らなかった。
-       イベント欄は固定サイズのままなので、縮むのは表だけ。 */
-    rh=Math.max(13,Math.min(30,isFinite(rh)?rh:26));
-    apply(rh);
-    /* 1回の計算だと、行高を変えた後に下部の高さが変わって表が溢れることがある。
-       溢れている間だけ1pxずつ詰める（下限13px・最大12回）。イベント欄は絶対に縮めない。 */
-    for(var g=0; g<12 && rh>13; g++){
-      if(e.tw.scrollHeight<=e.tw.clientHeight+1) break;
-      rh--; apply(rh);
-    }
-  }
-  window.__fitShift=fit;
-  var tb=document.getElementById('tBody');
-  if(tb&&window.MutationObserver){ new MutationObserver(function(){requestAnimationFrame(fit);}).observe(tb,{childList:true}); }
-  window.addEventListener('resize',function(){requestAnimationFrame(fit);});
-  if(window.visualViewport){ window.visualViewport.addEventListener('resize',function(){requestAnimationFrame(fit);}); }
-  window.addEventListener('orientationchange',function(){setTimeout(fit,300);});
-  document.addEventListener('click',function(e){ if(e.target.closest('.ftab')||e.target.closest('.nav-btn')) setTimeout(fit,80); });
-  window.addEventListener('load',function(){setTimeout(fit,150);});
-  setTimeout(fit,120); setTimeout(fit,900); setTimeout(fit,2000);
-})();
+/* Natural page scrolling: no viewport-height-dependent text shrinking. */
 </script>
 
 <script>
 /* Xへ移動する前に確認する */
 (function(){
-  var box=document.createElement('div'); box.id='xConfirm';
+  var box=document.createElement('div'); box.id='xConfirm';box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-labelledby','xcTtl');
   box.innerHTML='<div class="xc"><div class="xc-ttl" id="xcTtl"></div>'
     +'<div class="xc-sub">X（旧Twitter）のページが新しいタブで開きます</div>'
     +'<div class="xc-btns"><button class="xc-no" id="xcNo">キャンセル</button>'
     +'<button class="xc-go" id="xcGo">𝕏 開く</button></div></div>';
   document.body.appendChild(box);
-  var url='';
-  function close(){ box.classList.remove('on'); url=''; }
+  var url='',opener=null;
+  function close(){ box.classList.remove('on'); url='';if(opener)opener.focus(); }
+  box.addEventListener('keydown',function(e){if(e.key==='Escape')close();if(e.key==='Tab'){e.preventDefault();(document.activeElement.id==='xcNo'?document.getElementById('xcGo'):document.getElementById('xcNo')).focus();}});
   box.addEventListener('click',function(e){ if(e.target===box) close(); });
   document.getElementById('xcNo').onclick=close;
   document.getElementById('xcGo').onclick=function(){ var u=url; close(); if(u) window.open(u,'_blank','noopener'); };
@@ -1802,9 +1780,9 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
     if(!a) return;
     e.preventDefault(); e.stopPropagation();
     url=a.href;
-    var nm=(a.textContent||'').trim()||'このキャスト';
-    document.getElementById('xcTtl').innerHTML='<b>'+nm+'</b> さんの<br>X アカウントに飛びますか？';
-    box.classList.add('on');
+    var nm=a.dataset.castName||(a.textContent||'').trim()||'このキャスト';
+    document.getElementById('xcTtl').textContent=nm+' さんの X アカウントを開きますか？';
+    opener=a;box.classList.add('on');document.getElementById('xcNo').focus();
   },true);
 })();
 </script>

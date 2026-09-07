@@ -708,6 +708,66 @@ tbody td{text-align:center;vertical-align:middle;position:relative}
 #xConfirm .xc-no{background:#ece7f0;color:#6b6380}
 #xConfirm .xc-go{background:#111;color:#fff}
 
+/* =====================================================
+   2026-09-07 表の列幅・時刻の見え方（このファイルで最後に効く上書き）
+   ---------------------------------------------------
+   旧: table は auto レイアウトのままだったため、日付列に width:34px を
+       指定しても「名前列が残りの幅を全部吸う」挙動になり、1920px 幅で
+       名前列 1410px / 日付列 34px となって時刻が隣の日に重なっていた。
+       （min-width / max-width は display:table-cell には効かないので、
+         651〜652行の !important 指定は名前列の幅を止められていない）
+   新: table-layout:fixed にして
+        ・名前列 = 固定幅(--nameW)
+        ・日付列 = 残りを均等配分(width:auto)
+        ・table 全体に最低幅を持たせ、狭い画面では横スクロール
+       にする。sticky な名前列・ヘッダーはそのまま。
+===================================================== */
+:root{
+  --nameW:96px;    /* 名前列の固定幅 */
+  --dayCols:15;    /* 実際の日数は render() が上書きする */
+  /* 日付1列の最低幅。最長表記「19:30–23:30」(≒5.46em＋余白)が入る幅を
+     時刻札のフォントサイズ(--chip。行数に応じて fit() が上下させる)から算出する。
+     行数が多くて札が小さい端末では列も自動的に詰まる。 */
+  --dayMinW:max(72px, calc(var(--chip) * 7 + 14px));
+}
+.table-wrap table{
+  table-layout:fixed;
+  width:100%;
+  min-width:calc(var(--nameW) + var(--dayMinW) * var(--dayCols));
+}
+/* fixed レイアウトでは1行目(#dRow)のセル幅が列幅を決める */
+#dRow th:first-child{width:var(--nameW)}
+.th-date{width:auto;min-width:0}
+/* 時刻の札は必ずマスの中に収める（絶対配置でも隣の日にはみ出さない） */
+.shift{max-width:calc(100% - 3px);overflow:hidden}
+
+/* 取得状況（最終取得・再取得） */
+.fetch-info{display:inline-flex;align-items:center;gap:5px;color:#7c7490;font-weight:700}
+.fetch-info.err{color:#c0392b}
+.fetch-info button{
+  border:1px solid rgba(200,110,180,.45);background:#fff;color:#a8467e;
+  border-radius:12px;padding:1px 8px;font-size:9.5px;font-weight:800;cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+
+/* 未公開／通信エラーの案内 */
+#notice{
+  flex:0 0 auto;margin:6px 10px 0;padding:8px 12px;border-radius:12px;
+  font-size:12px;line-height:1.55;
+  background:#fdf5e2;border:1px solid rgba(200,150,40,.35);color:#6b5320}
+#notice.err{background:#fdeceb;border-color:rgba(200,60,50,.32);color:#8a2b22}
+#notice b{font-weight:900}
+#notice .nt-sub{display:block;font-size:11px;opacity:.85;margin-top:2px}
+#notice[hidden]{display:none}
+
+/* 時刻表記の凡例 */
+.tm-legend{flex:0 0 auto;font-size:10.5px;line-height:1.5;color:#6b6380}
+.tm-legend b{color:#3b3944;font-weight:900}
+
+@media(min-width:640px){
+  :root{--nameW:116px}
+  #notice{font-size:12.5px}
+}
+
 </style>
 </head>
 <body>
@@ -751,7 +811,10 @@ tbody td{text-align:center;vertical-align:middle;position:relative}
 <div class="hintbar">
   <span>👆 <b>行をタップ</b>すると、その子の予定が<b>光ります</b></span>
   <span>🐦 <b>名前をタップ</b>で X が開きます</span>
+  <span id="fetchInfo" class="fetch-info"></span>
 </div>
+
+<div id="notice" hidden></div>
 
 
 <div id="todayPanel" class="today-panel">
@@ -792,6 +855,7 @@ tbody td{text-align:center;vertical-align:middle;position:relative}
     <div class="lg-item lg-M"><span class="lg-dot"></span><img class="lg-logo" src="https://is-melty.jp/img/logo-ismelty.webp" alt="" onerror="this.style.display='none'"><span class="lg-name">I's Melty</span></div>
     <div class="lg-item lg-Y"><span class="lg-dot"></span><img class="lg-logo" src="https://lily-maid.com/img/logo-lilymaid.webp" alt="" onerror="this.style.display='none'"><span class="lg-name">Lily Maid</span></div>
   </div>
+  <div class="tm-legend">🕒 時刻＝出勤–退勤（<b>18–23:30</b> は 18:00〜23:30）／<b>ラスト</b>＝閉店まで／<b>翌4:00</b>＝翌朝4:00　※変更になる場合があります</div>
 </div>
 
 <script>
@@ -931,6 +995,61 @@ const SAMPLE = {
 const WD   = ['日','月','火','水','木','金','土'];
 const MO_J = ['','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 let curPeriod, activeFilter='all';
+let loadGeneration=0;
+let lastOkAt=null;          // 最後にサーバから取得できた時刻
+let shownPeriodKey='';      // いま表の中身が示している期間
+
+/* =====================================================
+   時刻表記の統一（2026-09-07）
+   ---------------------------------------------------
+   提出／公開データの表記はばらばら:
+     18-L / 20-L / 19:30-23:30 / 18-23.5 / 18-0 / 18-24 / 19-4 / 18-22
+   これを1か所に集約して次の形に揃える:
+     18–ラスト / 19:30–23:30 / 18–23:30 / 18–翌0:00 / 19–翌4:00
+   ・分が00のときは省略（短い表記＝凡例を画面と画像に併記）
+   ・日をまたぐ終業は必ず「翌H:MM」（0時・24時・1桁の時刻をすべて含む）
+   ・long=true で 18:00–23:30 の完全表記（title属性・ツールチップ用）
+   ・解釈できない文字列は絶対に捨てず、そのまま返す
+===================================================== */
+function fmtShiftTime(raw, long){
+  if(raw==null) return '';
+  var s=String(raw).trim();
+  if(!s) return '';
+  var t=s
+    .replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);})
+    .replace(/：/g,':').replace(/．/g,'.')
+    .replace(/時/g,':').replace(/分/g,'')
+    .replace(/[〜～~－—–―]/g,'-')
+    .replace(/\s/g,'');
+
+  function tok(x){
+    if(!x) return null;
+    var nx=false, m;
+    x=x.replace(/^(翌日|翌)/,function(){nx=true;return '';}).replace(/:+$/,'');
+    if(/^(l|last|ラスト|らすと|ﾗｽﾄ)$/i.test(x)) return {last:true};
+    if((m=x.match(/^(\d{1,2}):(\d{1,2})$/))) return {h:+m[1],mi:+m[2],nx:nx};
+    if((m=x.match(/^(\d{1,2})\.(\d+)$/)))    return {h:+m[1],mi:Math.round(parseFloat('0.'+m[2])*60),nx:nx};
+    if((m=x.match(/^(\d{1,2})$/)))           return {h:+m[1],mi:0,nx:nx};
+    if((m=x.match(/^(\d{2})(\d{2})$/)))      return {h:+m[1],mi:+m[2],nx:nx};
+    return null;
+  }
+  function one(x,next){
+    var h=((x.h%24)+24)%24, mi=x.mi||0;
+    var body=(mi||long||next)?(h+':'+(mi<10?'0'+mi:mi)):String(h);
+    return (next?'翌':'')+body;
+  }
+
+  var p=t.split('-');
+  var a=tok(p[0]);
+  if(!a||a.last) return s;                        // 開始が読めない → 原文のまま
+  if(p.length<2||p[1]==='') return one(a,false);  // 単独の時刻
+  var b=tok(p.slice(1).join('-'));
+  if(!b) return s;                                // 終了が読めない → 原文のまま
+  var A=one(a,!!a.nx);
+  if(b.last) return A+'–ラスト';
+  var next=b.nx||b.h>=24||(b.h*60+b.mi)<(a.h*60+(a.mi||0));
+  return A+'–'+one(b,next);
+}
 
 function detectPeriod(){const n=new Date();return{y:n.getFullYear(),m:n.getMonth()+1,h:n.getDate()<=15?1:2}}
 function periodKey(p){return p.y+'-'+p.m}
@@ -967,6 +1086,50 @@ function setStatus(cls,txt){
 }
 
 /* =====================================================
+   取得状況の表示（最終取得時刻・再取得）と、
+   「未公開」「通信エラー」の案内。両者は必ず別の文言にする。
+   ※ 従来の .status-bar は上書きCSSで display:none のため、
+     利用者からは取得状況がまったく見えていなかった。
+===================================================== */
+function clockHM(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+
+function setFetchInfo(state){
+  const save=document.getElementById('saveImgBtn');
+  if(save) save.disabled=state!=='ok'||!document.querySelector('#tBody tr');
+  const el=document.getElementById('fetchInfo');
+  if(!el) return;
+  const stamp=lastOkAt?clockHM(lastOkAt):'—';
+  if(state==='loading'){ el.className='fetch-info'; el.textContent='🕒 読み込み中…'; return; }
+  if(state==='error'){
+    el.className='fetch-info err';
+    el.innerHTML='⚠️ 取得できません（最終取得 '+stamp+'）<button type="button" id="reloadBtn">再取得</button>';
+  }else{
+    el.className='fetch-info';
+    el.innerHTML='🕒 最終取得 '+stamp+'<button type="button" id="reloadBtn">再取得</button>';
+  }
+  const b=document.getElementById('reloadBtn');
+  if(b) b.onclick=function(){ loadAndRender(curPeriod); };
+}
+
+function setNotice(kind,period){
+  const el=document.getElementById('notice');
+  if(!el) return;
+  if(!kind){ el.hidden=true; el.innerHTML=''; el.className=''; return; }
+  if(kind==='error'){
+    el.className='err';
+    el.innerHTML='<b>お給仕予定を読み込めませんでした（通信エラー）。</b>'
+      +'<span class="nt-sub">電波の良い場所で「再取得」をお試しください。'
+      +(lastOkAt?'最終取得は '+clockHM(lastOkAt)+' です。':'')
+      +'表示が出ないことは、お休み・未公開を意味するものではありません。</span>';
+  }else{
+    el.className='';
+    el.innerHTML='<b>'+periodLabel(period)+'のお給仕予定は、まだ公開されていません。</b>'
+      +'<span class="nt-sub">公開までもうしばらくお待ちください。お店がお休みという意味ではなく、通信エラーでもありません。</span>';
+  }
+  el.hidden=false;
+}
+
+/* =====================================================
    TODAY PANEL
 ===================================================== */
 function renderToday(allRows){
@@ -993,7 +1156,7 @@ function renderToday(allRows){
       :`<span class="tc-name">${name}</span>`;
     const slogo=CONFIG.STORE_LOGO[store]
       ?`<img class="tc-slogo" src="${CONFIG.STORE_LOGO[store]}" alt="" onerror="this.style.display='none'">`:'';
-    chip.innerHTML=img+nm+`<span class="tc-time">${time}</span>`+slogo;
+    chip.innerHTML=img+nm+`<span class="tc-time">${fmtShiftTime(time)}</span>`+slogo;
     chips.appendChild(chip);
   });
   panel.classList.add('visible');
@@ -1007,6 +1170,10 @@ function render(period, allRows){
   const daysInMonth=new Date(y,m,0).getDate();
   const startDay=h===1?1:16, endDay=h===1?15:daysInMonth;
   const todayD=(()=>{const n=new Date();return(n.getFullYear()===y&&n.getMonth()+1===m)?n.getDate():-1})();
+
+  /* 日付列の本数を CSS に渡す（表の最低幅＝名前列＋日数×1列の最低幅）*/
+  document.documentElement.style.setProperty('--dayCols',String(endDay-startDay+1));
+  shownPeriodKey=periodKey(period)+'-'+h;
 
   document.getElementById('titlePeriod').textContent=periodLabel(period);
   document.getElementById('navLabel').textContent=navLabel(period);
@@ -1101,7 +1268,9 @@ function render(period, allRows){
         const sp=document.createElement('span');
         sp.className='shift shift-'+s.store;
         sp.dataset.store=s.store;
-        sp.textContent=s.time;
+        sp.dataset.raw=s.time;                     // 元表記は保持（画像・デバッグ用）
+        sp.textContent=fmtShiftTime(s.time);       // 表示は 18–23:30 / 18–ラスト / 19–翌4:00
+        sp.title=fmtShiftTime(s.time,true);        // 長押し・ホバーは 18:00–23:30
         td.appendChild(sp);
       }
       tr.appendChild(td);
@@ -1170,21 +1339,36 @@ async function loadEvents(period){
 }
 
 async function loadAndRender(period){
+  const generation=++loadGeneration;
   setStatus('ld','読み込み中…');
+  setFetchInfo('loading');
   const key=periodKey(period);
   location.hash=period.y+'-'+period.m+'-'+period.h;
   await loadEvents(period);
   try{
     const rows=await loadSheet(key);
+    if(generation!==loadGeneration)return;
     render(period,rows);
     renderToday(rows);
+    lastOkAt=new Date();
     setStatus('ok','シフト反映済み');
+    /* 取得はできたが、この期間の行が0件＝まだ公開されていない
+       （通信エラーとも「お休み」とも別の状態として案内する）*/
+    setNotice(document.querySelectorAll('#tBody tr').length?'':'unpublished',period);
+    setFetchInfo('ok');
   } catch(e){
+    if(generation!==loadGeneration)return;
     console.warn(e);
-    const sample=SAMPLE[key]||[];
-    render(period,sample);
-    renderToday(sample);
-    setStatus('err','サンプルデータ表示中');
+    /* 通信エラー時にサンプルデータ(6月)へ差し替えると、別の月の予定を
+       本物として見せてしまう。状態表示バーも非表示のため気づけない。
+       → 差し替えはやめ、エラーであることと最終取得時刻・再取得を出す。
+         すでに同じ期間を表示できている場合は、その表示を消さない。 */
+    const keepTable=shownPeriodKey===(key+'-'+period.h)
+      && document.querySelectorAll('#tBody tr').length>0;
+    if(!keepTable){ render(period,[]); renderToday([]); }
+    setStatus('err','読み込みエラー');
+    setNotice('error',period);
+    setFetchInfo('error');
   }
 }
 
@@ -1408,7 +1592,9 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       var D=collect();
       if(!D.rows.length){ alert('表示中のシフトがありません。'); return; }
       if(btn){ btn.disabled=true; btn.innerHTML='作成中…'; }
-      var SC=2,M=22,PAD=10,NW=118,CW=70,RH=40,HH=46,BAN=62,LH=52;
+      /* CW: 統一後の最長表記「19:30–23:30」が bold 12px で入る幅（旧70pxでは溢れていた）
+         NW: 名前列。どちらも下の fitText で最終的に必ず内側へ収める。 */
+      var SC=2,M=22,PAD=10,NW=124,CW=86,RH=40,HH=46,BAN=62,LH=52;
       var gridW=NW+CW*D.days.length;
       var W=M*2+PAD*2+gridW;
       var cardH=PAD*2+HH+RH*D.rows.length;
@@ -1419,6 +1605,15 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       var g=cv.getContext('2d'); g.scale(SC,SC);
       function rr(x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r);
         g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+      /* 文字がマスからはみ出さないよう、入りきるまで少しずつ小さくする。
+         名前が長い子・「19:30–23:30」のような長い時刻でも必ず内側に収まる。 */
+      function fitText(txt,maxW,px,bold){
+        var size=px;
+        g.font=(bold?'bold ':'')+size+'px '+FONT;
+        while(size>7 && g.measureText(txt).width>maxW){
+          size-=0.5; g.font=(bold?'bold ':'')+size+'px '+FONT;
+        }
+      }
       var bg=g.createLinearGradient(0,0,0,H); bg.addColorStop(0,'#faf6ff'); bg.addColorStop(1,'#f1e9f8');
       g.fillStyle=bg; g.fillRect(0,0,W,H);
       var bn=g.createLinearGradient(M,0,W-M,0); bn.addColorStop(0,'#7b5ea7'); bn.addColorStop(1,'#a86bc9');
@@ -1428,7 +1623,11 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       g.fillText("🗓 M's GROUP お給仕予定", M+22, M+BAN/2-10);
       var per=((document.getElementById('navLabel')||{}).textContent||'').trim();
       g.font='12px '+FONT; g.globalAlpha=.92;
-      g.fillText(per+"   Linaria ・ I's Melty ・ Lily Maid", M+22, M+BAN/2+13); g.globalAlpha=1;
+      /* いつ時点の予定かを画像にも残す（受け取った人が古い画像と区別できるように）*/
+      var at=(typeof lastOkAt!=='undefined'&&lastOkAt)?lastOkAt:new Date();
+      var stamp='（'+(at.getMonth()+1)+'/'+at.getDate()+' '
+        +String(at.getHours()).padStart(2,'0')+':'+String(at.getMinutes()).padStart(2,'0')+' 時点）';
+      g.fillText(per+"   Linaria ・ I's Melty ・ Lily Maid   "+stamp, M+22, M+BAN/2+13); g.globalAlpha=1;
       var cy0=M+BAN+14;
       g.save(); g.shadowColor='rgba(90,60,130,.16)'; g.shadowBlur=14; g.shadowOffsetY=3;
       rr(M,cy0,W-M*2,cardH,14); g.fillStyle='#fff'; g.fill(); g.restore();
@@ -1447,7 +1646,8 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
         var cy=gy+HH+RH*r;
         if(r%2===1){ g.fillStyle='#faf7fd'; g.fillRect(gx,cy,gridW,RH); }
         g.strokeStyle='#f0eaf6'; g.lineWidth=1; g.beginPath(); g.moveTo(gx,cy); g.lineTo(gx+gridW,cy); g.stroke();
-        g.fillStyle='#4a4257'; g.font='bold 13px '+FONT; g.textAlign='left';
+        g.fillStyle='#4a4257'; g.textAlign='left';
+        fitText(rw.name,NW-20,13,true);
         g.fillText(rw.name,gx+12,cy+RH/2);
         rw.cells.forEach(function(c,i){
           if(!c) return;
@@ -1455,7 +1655,8 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
           rr(cx+3,cy+4,CW-6,RH-8,8);
           g.fillStyle=COL[c.store]||'#eee'; g.fill();
           g.strokeStyle=EDGE[c.store]||'#bbb'; g.lineWidth=1.2; g.stroke();
-          g.fillStyle='#3a3340'; g.font='bold 12px '+FONT; g.textAlign='center';
+          g.fillStyle='#3a3340'; g.textAlign='center';
+          fitText(c.t,CW-14,12,true);
           g.fillText(c.t,cx+CW/2,cy+RH/2);
         });
       });
@@ -1469,7 +1670,8 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
         lx+=tw+34+12;
       });
       g.font='11px '+FONT; g.fillStyle='#8a7f96'; g.textAlign='right';
-      g.fillText('時間は 出勤-退勤(L=ラスト) / 変更になる場合があります', W-M-PAD, ly+11);
+      g.fillText('時刻＝出勤–退勤（18–23:30 は 18:00〜23:30）／ラスト＝閉店まで／翌4:00＝翌朝4:00　※変更になる場合があります',
+                 W-M-PAD, ly+11);
       /* イベント情報（ポスター風に画像へも載せる） */
       var evs=[].slice.call(document.querySelectorAll('#evList li')).map(function(li){
         var d=li.querySelector('.ev-date'); var dt=d?d.textContent.trim():'';
@@ -1542,7 +1744,9 @@ try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
       st.setProperty('--rowH',rh+'px');
       st.setProperty('--chip',Math.max(6.8,Math.min(11,Math.round(rh*0.34*10)/10))+'px');
       st.setProperty('--nameF',Math.max(8.5,Math.min(13,Math.round(rh*0.42*10)/10))+'px');
-      st.setProperty('--dayW',(rh<18?26:rh<22?28:rh<24?30:rh<28?32:34)+'px');
+      /* 2026-09-07: 日付列の幅はここでは決めない。
+         CSS 側で「名前列＝固定幅／日付列＝残りを均等配分（最低幅は --chip から算出）」
+         にしたため、--dayW は使っていない。 */
     }
     /* v4: 高さの配分は body(flex) が決めるので、ここは「表の中をなるべくスクロール
        せずに見せる」ための行の高さ調整だけ。イベント欄には一切触らない。 */

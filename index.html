@@ -916,6 +916,15 @@ body.table-mode .shift .time-inline{display:inline-block;flex:none;width:max-con
 </style><style id="cast-detail-photo-style">
 .overview-cast-photo{display:flex;justify-content:center;align-items:center;width:112px;height:140px;margin:0 auto 14px;border-radius:14px;overflow:hidden;background:#f3edf6;color:#82678e;font-size:12px}
 .overview-cast-photo img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+</style><style id="store-status-20260924">
+/* 現在の営業状況（日報送信で「営業終了」）— 1〜2行の最小高さ。表は残りの高さで overviewFit が再計算する */
+.store-status{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1px 8px;max-width:720px;margin:0 auto;padding:2px 10px 6px;font-size:12px;line-height:1.4;color:#5f506a}
+.store-status .ss-label{font-weight:700;color:#4c3957;white-space:nowrap}
+.store-status .ss-item{white-space:nowrap}
+.store-status .ss-closed{font-weight:700;color:#7a2f5f}
+.store-status .ss-unknown{color:#7c7490}
+.store-status .ss-note{font-size:.85em;color:#877f95;white-space:nowrap}
+body.table-mode .store-status{padding:2px 6px 4px;font-size:12px;line-height:1.35;gap:1px 6px}
 </style>
 </head>
 <body class="table-mode">
@@ -965,6 +974,7 @@ body.table-mode .shift .time-inline{display:inline-block;flex:none;width:max-con
   <span>🐦 <b>名前をタップ</b>で X が開きます</span>
   <span id="fetchInfo" class="fetch-info"></span>
 </div>
+<div id="storeStatus" class="store-status" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <div id="notice" role="status" hidden></div>
 <p id="changeMessage" class="change-message" role="status" hidden></p>
@@ -1503,6 +1513,7 @@ function updateTabs(){
   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===viewMode)));
   document.querySelectorAll('.ftab').forEach(b=>{const on=b.dataset.store===activeFilter;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
   if(viewMode==='table'&&curPeriod){requestAnimationFrame(overviewFit);document.getElementById('titlePeriod').textContent=periodLabel(curPeriod);document.title=navLabel(curPeriod)+' お給仕予定 | '+(STORE_NAMES[activeFilter]||'MS Group');}
+  renderStoreStatus();
 }
 function selectView(mode){
   viewMode=mode;updateTabs();
@@ -1698,8 +1709,82 @@ function initOverview(){
   overviewTimes();
 }
 
+/* =====================================================
+   現在の営業状況（2026-09-24）
+   ---------------------------------------------------
+   日報が Discord へ送信された店舗・営業日だけを「営業終了」と表示する。
+   ・表示中の期間とは無関係に「いまの営業日」（日本時間10:00切替＝日報の日付）を表示
+   ・サーバが同じ営業日で確認したものだけ closed。それ以外はすべて「未確認」
+     （シフトから営業状態を推測しない。「開いている」という表示は出さない）
+   ・保存済みの状態は使わない。取得失敗・日付の切替・3分以上古い取得は即「未確認」
+===================================================== */
+const STATUS_URL='https://ms-store-status.kc-masashi0614.workers.dev/status';
+const STATUS_SLUG={L:'linaria',M:'ismelty',Y:'lily'};
+const STATUS_INTERVAL=60*1000, STATUS_TIMEOUT=8000, STATUS_MAX_AGE=3*60*1000;
+let storeStatus={day:'',at:0,closed:{},failed:false};
+let statusGen=0, statusCtl=null, statusShown='';
+function statusBizDay(now=new Date()){const d=jstNow(now);if(d.getUTCHours()<10)d.setUTCDate(d.getUTCDate()-1);return dateKey(d);}
+function renderStoreStatus(){
+  const el=document.getElementById('storeStatus');if(!el)return;
+  const now=new Date(),day=statusBizDay(now);
+  const fresh=storeStatus.day===day&&Date.now()-storeStatus.at<=STATUS_MAX_AGE;
+  const closed=fresh?storeStatus.closed:{};
+  const p=day.split('-').map(Number),md=p[1]+'/'+p[2];
+  const whenDay=dateKey(jstNow(now))===day?'本日':md+'（'+WD[new Date(day+'T12:00:00Z').getUTCDay()]+'）';
+  const stores=activeFilter==='all'?['L','M','Y']:[activeFilter];
+  const parts=[['ss-label','現在の営業状況（'+md+'営業分）']];
+  stores.forEach(s=>{
+    const c=Object.prototype.hasOwnProperty.call(closed,s);
+    const txt=activeFilter==='all'?(c?'営業終了':'未確認'):(c?whenDay+'の営業は終了しました':'営業状況は未確認');
+    parts.push([c?'ss-item ss-closed':'ss-item ss-unknown',STORE_NAMES[s]+' '+txt]);
+  });
+  parts.push(['ss-note',storeStatus.failed?'取得できません・約1分後に再確認':'約1分ごとに更新']);
+  const key=JSON.stringify(parts);
+  if(key===statusShown)return;
+  statusShown=key;
+  el.replaceChildren(...parts.map(([cls,txt])=>{const sp=document.createElement('span');sp.className=cls;sp.textContent=txt;return sp;}));
+  requestAnimationFrame(overviewFit);
+}
+async function fetchStoreStatus(){
+  if(document.hidden)return;
+  const gen=++statusGen;
+  if(statusCtl)statusCtl.abort();
+  const ctl=new AbortController();statusCtl=ctl;
+  const timer=setTimeout(()=>ctl.abort(),STATUS_TIMEOUT);
+  try{
+    const r=await fetch(STATUS_URL,{cache:'no-store',credentials:'omit',signal:ctl.signal});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    if(gen!==statusGen)return;
+    if(!data||data.version!==1||!data.stores||typeof data.stores!=='object')throw new Error('invalid');
+    const checked=Date.parse(data.checkedAt);
+    if(!Number.isFinite(checked)||Math.abs(Date.now()-checked)>STATUS_MAX_AGE)throw new Error('stale');
+    const day=statusBizDay(),closed={};
+    Object.keys(STATUS_SLUG).forEach(k=>{
+      const s=data.stores[STATUS_SLUG[k]];
+      if(s&&s.status==='closed'&&s.businessDate===day&&typeof s.closedAt==='string'&&!isNaN(Date.parse(s.closedAt)))closed[k]=true;
+    });
+    storeStatus={day,at:Date.now(),closed,failed:false};
+  }catch(e){
+    if(gen!==statusGen)return;
+    storeStatus={day:'',at:0,closed:{},failed:true};
+  }finally{
+    clearTimeout(timer);
+    if(statusCtl===ctl)statusCtl=null;
+  }
+  renderStoreStatus();
+}
+function initStoreStatus(){
+  renderStoreStatus();fetchStoreStatus();
+  setInterval(()=>{renderStoreStatus();fetchStoreStatus();},STATUS_INTERVAL);
+  const back=()=>{if(!document.hidden){renderStoreStatus();fetchStoreStatus();}};
+  document.addEventListener('visibilitychange',back);
+  window.addEventListener('pageshow',e=>{if(e.persisted)back();});
+}
+
 initOverview();
 initPublicView();
+initStoreStatus();
 function hideHint(){var h=document.getElementById('tapHint');if(h)h.style.display='none';try{localStorage.setItem('hideTapHint','1');}catch(e){}}
 try{if(localStorage.getItem('hideTapHint')==='1')hideHint();}catch(e){}
 

@@ -923,6 +923,7 @@ body.table-mode .shift .time-inline{display:inline-block;flex:none;width:max-con
 .store-status .ss-item{white-space:nowrap}
 .store-status .ss-closed{font-weight:700;color:#7a2f5f}
 .store-status .ss-unknown{color:#7c7490}
+.store-status .ss-caution{flex-basis:100%}
 .store-status .ss-note{font-size:.85em;color:#877f95;white-space:nowrap}
 body.table-mode .store-status{padding:2px 6px 4px;font-size:12px;line-height:1.35;gap:1px 6px}
 </style>
@@ -1738,7 +1739,9 @@ function renderStoreStatus(){
     const txt=activeFilter==='all'?(c?'営業終了':'未確認'):(c?whenDay+'の営業は終了しました':'営業状況は未確認');
     parts.push([c?'ss-item ss-closed':'ss-item ss-unknown',STORE_NAMES[s]+' '+txt]);
   });
-  parts.push(['ss-note',storeStatus.failed?'取得できません・約1分後に再確認':'約1分ごとに更新']);
+  const checked=fresh?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(storeStatus.at)):'';
+  parts.push(['ss-note',storeStatus.failed?'取得できません・約1分後に再確認':checked?checked+'確認・約1分ごとに更新':'営業状況を確認中']);
+  if(stores.some(s=>!Object.prototype.hasOwnProperty.call(closed,s)))parts.push(['ss-note ss-caution','未確認＝営業中の確認は取れていません']);
   const key=JSON.stringify(parts);
   if(key===statusShown)return;
   statusShown=key;
@@ -1776,6 +1779,7 @@ async function fetchStoreStatus(){
 }
 function initStoreStatus(){
   renderStoreStatus();fetchStoreStatus();
+  document.getElementById('reloadBtn')?.addEventListener('click',fetchStoreStatus);
   setInterval(()=>{renderStoreStatus();fetchStoreStatus();},STATUS_INTERVAL);
   const back=()=>{if(!document.hidden){renderStoreStatus();fetchStoreStatus();}};
   document.addEventListener('visibilitychange',back);

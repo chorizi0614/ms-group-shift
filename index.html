@@ -926,18 +926,107 @@ body.table-mode .shift .time-inline{display:inline-block;flex:none;width:max-con
 .store-status .ss-caution{flex-basis:100%}
 .store-status .ss-note{font-size:.85em;color:#877f95;white-space:nowrap}
 body.table-mode .store-status{padding:2px 6px 4px;font-size:12px;line-height:1.35;gap:1px 6px}
+</style><style id="compact-header-20260924">
+/* 上部をコンパクトに（2026-09-24）
+   ブランド＋表示切替 / 店舗 / 期間＋更新 / 営業状況 の4段だけ。
+   取得時刻・更新間隔・時刻の読み方・操作説明は「見方・更新」ダイアログへ移した。 */
+.hintbar,.overview-guide{display:none!important}
+body.table-mode .logo-band,body.day-mode .logo-band{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(4px + env(safe-area-inset-top)) 8px 4px;background:linear-gradient(120deg,#f2e7f7,#fceef3);border-bottom:1px solid rgba(170,110,160,.16)}
+.brand{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden}
+body.table-mode .ms-logo,body.day-mode .ms-logo{height:24px;max-width:84px;padding:3px 7px;border-radius:6px}
+.ms-logo-fallback{font-size:13px;letter-spacing:2px;margin:0;white-space:nowrap}
+body.table-mode .header-title,body.day-mode .header-title{font-size:13.5px;font-weight:700;letter-spacing:1px;color:#514059;white-space:nowrap}
+body.table-mode .header-period,body.day-mode .header-period{display:none}
+body.table-mode .view-tabs,body.day-mode .view-tabs{flex:none;width:auto;max-width:none;margin:0;padding:2px;gap:2px;border-radius:12px;background:#eadff0}
+body.table-mode .view-tabs button,body.day-mode .view-tabs button{flex:none;min-height:36px;padding:0 12px;font-size:12.5px;border-radius:10px;cursor:pointer}
+body.table-mode .filter-row,body.day-mode .filter-row{padding:4px 8px;gap:5px;max-width:720px;margin:0 auto;background:#faf7fb;border:0}
+body.table-mode .ftab,body.day-mode .ftab{min-width:0;min-height:36px;padding:0 4px;flex-direction:row;gap:0;border-radius:12px;font-size:12px}
+body.table-mode .ftab-logo,body.day-mode .ftab-logo{display:none}
+body.table-mode .ftab-name,body.day-mode .ftab-name{font-size:12px;line-height:1.2}
+.ftab-name::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px;background:var(--sc)}
+.ftab.is-L{--sc:#42b0cc}.ftab.is-M{--sc:#d060a0}.ftab.is-Y{--sc:#a79fc6}
+/* 期間ナビ（中央）＋エラー表示・更新ボタン（右） */
+body.table-mode .nav-row,body.day-mode .nav-row{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;max-width:720px;margin:0 auto;padding:2px 8px;background:transparent;border:0}
+.nav-period{grid-column:2;display:flex;align-items:center;gap:6px}
+.nav-tools{grid-column:3;justify-self:end;display:flex;align-items:center;gap:4px}
+body.day-mode .nav-period{display:none}
+body.table-mode .nav-btn,body.day-mode .nav-btn{width:40px;height:40px;font-size:22px;border-radius:12px}
+body.table-mode #navLabel,body.day-mode #navLabel{min-width:0;font-size:14px;white-space:nowrap;text-align:center}
+.icon-btn{flex:none;width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid #d8c8e3;border-radius:12px;background:#fff;color:#694b7a;cursor:pointer}
+.icon-btn svg{width:20px;height:20px}
+.icon-btn.busy svg{animation:ms-spin 1s linear infinite}
+@keyframes ms-spin{to{transform:rotate(360deg)}}
+.sync-alert{flex:none;min-height:32px;padding:0 9px;border:1px solid rgba(192,57,43,.45);border-radius:16px;background:#fdeceb;color:#a3281c;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
+/* 営業状況: 日付＋店舗バッジ1行（狭い端末では折り返し、横にはみ出さない） */
+body.table-mode .store-status,body.day-mode .store-status{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 5px;max-width:720px;margin:0 auto;padding:1px 8px 5px;font-size:12px;line-height:1.2}
+.store-status .ss-label{font-weight:700;color:#4c3957;white-space:nowrap;margin-right:1px}
+.ss-badge{display:inline-flex;align-items:center;gap:4px;min-height:28px;padding:0 9px;border:1px solid #ddd0e4;border-radius:14px;background:#fff;color:#5f5570;font-family:inherit;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
+.ss-badge .ss-dot{width:7px;height:7px;border-radius:50%;background:var(--sc,#aaa);flex:none}
+.ss-badge .ss-state{font-weight:500;color:#6b6078}
+.ss-badge.is-closed{background:#f5e7f0;border-color:#cf8fb4;color:#5e2449}
+.ss-badge.is-closed .ss-state{font-weight:800;color:#7a2f5f}
+.ss-badge[data-store="L"]{--sc:#42b0cc}.ss-badge[data-store="M"]{--sc:#d060a0}.ss-badge[data-store="Y"]{--sc:#a79fc6}
+body.table-mode #notice.err{display:none}
+/* 下部2ボタン */
+body.table-mode .overview-actions,body.day-mode .overview-actions{display:flex;justify-content:center;align-items:center;gap:10px;flex:none;padding:4px 10px calc(4px + env(safe-area-inset-bottom));background:#faf7fb;border-top:1px solid #eee4f1}
+body.table-mode .overview-actions button,body.day-mode .overview-actions button,body.table-mode #saveImgBtn{flex:1;max-width:180px;min-height:40px;margin:0;padding:0 14px;justify-content:center;font-size:13px;font-weight:700;border-radius:12px;background:#fff;color:#694b7a;border:1px solid #d8c8e3;cursor:pointer}
+#saveImgBtn:disabled{opacity:.5;cursor:default}
+/* 見方・更新ダイアログ */
+.info-sec{margin:0 0 14px}
+.info-sec h3{font-size:14px;color:#5b4365;margin:0 0 6px}
+.info-list{list-style:none;display:grid;gap:3px;font-size:13px;line-height:1.6;color:#4f4358}
+.info-list .err{color:#a3281c;font-weight:700}
+.info-note{font-size:12px;line-height:1.65;color:#6d5c78;margin-top:4px}
+.info-refresh{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;margin:0 0 16px;border:1px solid #d8c8e3;border-radius:12px;background:#fff;color:#684f73;font-size:14px;font-weight:700;cursor:pointer}
+@media(max-width:360px){
+  .store-status .ss-label,.ss-badge{font-size:11.5px}
+  .ss-badge{padding:0 6px;gap:3px}
+  body.table-mode .store-status,body.day-mode .store-status{gap:4px 3px;padding-inline:4px}
+  body.table-mode .nav-btn{width:36px}
+  body.table-mode #navLabel{font-size:13px}
+  body.table-mode .nav-row{padding-inline:6px;gap:4px}
+  body.table-mode .view-tabs button{padding:0 10px}
+}
+@media(max-height:600px) and (max-width:719px){
+  body.table-mode .logo-band{padding-block:calc(2px + env(safe-area-inset-top)) 2px}
+  body.table-mode .view-tabs button{min-height:34px}
+  body.table-mode .filter-row{padding-block:3px}
+  body.table-mode .nav-row{padding-block:1px}
+  body.table-mode .nav-btn,body.table-mode .icon-btn{height:36px}
+  body.table-mode .overview-actions{padding-block:3px}
+  body.table-mode .overview-actions button,body.table-mode #saveImgBtn{min-height:38px}
+}
+@media(min-width:720px){body.table-mode .logo-band,body.day-mode .logo-band{padding-inline:max(12px,calc(50% - 360px))}}
+
+/* 日付と3店舗を揃え、1店舗だけ次の行に残らない配置 */
+body.table-mode .store-status,body.day-mode .store-status{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:4px;padding:2px 8px 6px}
+.store-status .ss-label{grid-column:1/-1;text-align:left;font-size:11px;color:#786684;padding-left:3px}
+.store-status .ss-badge{justify-content:center;min-height:32px;padding:0 5px}
+body.table-mode .store-status.is-single,body.day-mode .store-status.is-single{display:flex;justify-content:center}
+.store-status.is-single .ss-label{font-size:12px}
+body.day-mode #overviewContent .legend{display:flex!important}
+body.table-mode .nav-row,body.day-mode .nav-row{grid-template-columns:minmax(0,1fr) auto}
+.nav-period{grid-column:1;justify-self:center}
+.nav-tools{grid-column:2}
+.sync-alert{width:32px;min-width:32px;padding:0;font-size:17px}
 </style>
 </head>
 <body class="table-mode">
 
 <header>
   <div class="logo-band">
-    <img class="ms-logo" src="ms-logo.png" alt="MS Group"
-         onerror="this.style.display='none';document.querySelector('.ms-logo-fallback').style.display='block'">
-    <div class="ms-logo-fallback">MS<span style="font-size:.55em;letter-spacing:4px;display:block;font-weight:400;margin-top:2px">GROUP</span></div>
-    <div class="logo-text">
-      <div class="header-title">お 給 仕 予 定</div>
-      <div class="header-period" id="titlePeriod"></div>
+    <div class="brand">
+      <img class="ms-logo" src="ms-logo.png" alt="MS Group"
+           onerror="this.style.display='none';document.querySelector('.ms-logo-fallback').style.display='block'">
+      <div class="ms-logo-fallback">MS GROUP</div>
+      <div class="logo-text">
+        <div class="header-title">お給仕予定</div>
+        <div class="header-period" id="titlePeriod"></div>
+      </div>
+    </div>
+    <div class="view-tabs" role="group" aria-label="表示の切り替え">
+      <button type="button" data-view="day" aria-pressed="false">日別</button>
+      <button type="button" data-view="table" aria-pressed="true">半月表</button>
     </div>
   </div>
 
@@ -960,21 +1049,18 @@ body.table-mode .store-status{padding:2px 6px 4px;font-size:12px;line-height:1.3
     </button>
   </div>
 
-  <div class="view-tabs" role="group" aria-label="表示の切り替え">
-    <button type="button" data-view="day" aria-pressed="false">日別で見る</button>
-    <button type="button" data-view="table" aria-pressed="true">半月表で見る</button>
-  </div>
   <div class="nav-row">
-    <button class="nav-btn" onclick="go(-1)" aria-label="前の期間">&#8249;</button>
-    <span id="navLabel"></span>
-    <button class="nav-btn" onclick="go(1)" aria-label="次の期間">&#8250;</button>
+    <div class="nav-period">
+      <button class="nav-btn" onclick="go(-1)" aria-label="前の期間">&#8249;</button>
+      <span id="navLabel"></span>
+      <button class="nav-btn" onclick="go(1)" aria-label="次の期間">&#8250;</button>
+    </div>
+    <div class="nav-tools">
+      <button type="button" id="syncAlert" class="sync-alert" title="更新エラーの詳細" hidden>!</button>
+      <button type="button" id="refreshBtn" class="icon-btn" aria-label="シフトと営業状況を更新" title="シフトと営業状況を更新"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button>
+    </div>
   </div>
 </header>
-<div class="hintbar">
-  <span>👆 <b>行をタップ</b>すると、その子の予定が<b>光ります</b></span>
-  <span>🐦 <b>名前をタップ</b>で X が開きます</span>
-  <span id="fetchInfo" class="fetch-info"></span>
-</div>
 <div id="storeStatus" class="store-status" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <div id="notice" role="status" hidden></div>
@@ -1004,7 +1090,6 @@ body.table-mode .store-status{padding:2px 6px 4px;font-size:12px;line-height:1.3
 
 <div class="tap-hint" id="tapHint">💡 名前をタップすると、そのキャストの<b>𝕏（旧Twitter）</b>が開きます<button class="th-x" onclick="hideHint()" aria-label="閉じる">×</button></div>
 
-<div class="overview-guide"><span>時刻＝出勤-退勤（退勤0〜5時は翌朝）<br><b>行をタップで拡大</b>・L＝閉店まで</span></div>
 <div class="table-wrap">
   <table>
     <thead>
@@ -1015,7 +1100,7 @@ body.table-mode .store-status{padding:2px 6px 4px;font-size:12px;line-height:1.3
   </table>
 </div>
 
-<div class="overview-actions"><button type="button" id="overviewInfo">色・時刻・イベント</button><button class="cmp-btn" id="saveImgBtn" onclick="saveImage()" style="bottom:64px">📷 画像保存</button></div>
+<div class="overview-actions"><button type="button" id="overviewInfo" aria-haspopup="dialog">見方・更新</button><button class="cmp-btn" id="saveImgBtn" onclick="saveImage()">画像保存</button></div>
 <button class="cmp-btn on" id="cmpBtn" onclick="toggleCompact()">
   <span class="cmp-icon">⊟</span>通常表示
 </button>
@@ -1167,23 +1252,28 @@ function setStatus(cls,txt){
 ===================================================== */
 function clockHM(d){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(d)}
 
+/* 2026-09-24: 取得状況の文章は常時表示せず「見方・更新」ダイアログに出す。
+   画面上は ⚠ エラー（シフト/営業状況どちらかの取得失敗）と更新ボタンの回転だけ。 */
+let fetchState='loading';
 function setFetchInfo(state){
+  fetchState=state;
   const save=document.getElementById('saveImgBtn');
   if(save) save.disabled=state!=='ok'||!document.querySelector('#tBody tr');
-  const el=document.getElementById('fetchInfo');
-  if(!el) return;
-  const stamp=lastOkAt?clockHM(lastOkAt):'—';
-  if(state==='loading'){ el.className='fetch-info'; el.textContent='🕒 読み込み中…'; return; }
-  if(state==='error'){
-    el.className='fetch-info err';
-    el.innerHTML='⚠️ 取得できません（最終取得 '+stamp+'）<button type="button" id="reloadBtn">再取得</button>';
-  }else{
-    el.className='fetch-info';
-    el.innerHTML='<span><span class="update-dot"></span>5分ごと自動更新<br>最終取得 '+stamp+'（日本時間）</span><button type="button" id="reloadBtn">再取得</button>';
-  }
-  const b=document.getElementById('reloadBtn');
-  if(b) b.onclick=refreshPublic;
+  updateSyncUI();
 }
+function updateSyncUI(){
+  const busy=fetchState==='loading'||statusBusy;
+  const rb=document.getElementById('refreshBtn');
+  if(rb){rb.classList.toggle('busy',busy);rb.setAttribute('aria-busy',String(busy));}
+  const shiftErr=fetchState==='error',statusErr=storeStatus.failed;
+  const al=document.getElementById('syncAlert');
+  if(al){
+    al.hidden=!(shiftErr||statusErr);
+    al.setAttribute('aria-label',(shiftErr&&statusErr?'シフトと営業状況':shiftErr?'シフト':'営業状況')+'を取得できません。詳細を開く');
+  }
+  if(window.refreshInfoDialog)window.refreshInfoDialog();
+}
+function refreshAll(){refreshPublic();fetchStoreStatus();}
 
 function setNotice(kind,period){
   const el=document.getElementById('notice');
@@ -1554,7 +1644,7 @@ function renderDaily(){
   }
   const body=document.getElementById('dayCards');
   const hasData=publicMonth===periodKey(dayPeriod(selectedDay));
-  if(!hasData){body.innerHTML='<p class="empty-day">'+(publicState==='error'?'シフトを取得できませんでした。上の「再取得」をお試しください。':'お給仕予定を読み込んでいます…')+'</p>';return;}
+  if(!hasData){body.innerHTML='<p class="empty-day">'+(publicState==='error'?'シフトを取得できませんでした。上の更新ボタン（↻）をお試しください。':'お給仕予定を読み込んでいます…')+'</p>';return;}
   const rows=publicRows.filter(r=>Number(r[1])===Number(selectedDay.slice(-2))&&(activeFilter==='all'||r[2]===activeFilter));
   const stores=activeFilter==='all'?['L','M','Y']:[activeFilter];
   body.replaceChildren();
@@ -1654,9 +1744,31 @@ function overviewTimes(){
 }
 function initOverview(){
   const box=document.getElementById('overviewDialog'),title=document.getElementById('overviewTitle'),content=document.getElementById('overviewContent');
-  let opener=null;
-  const close=()=>{box.hidden=true;if(opener&&opener.isConnected)opener.focus();};
-  function open(label){title.textContent=label;content.replaceChildren();box.hidden=false;document.getElementById('overviewClose').focus();}
+  let opener=null, liveBuild=null;
+  const close=()=>{
+    box.hidden=true;liveBuild=null;
+    if(opener&&opener.isConnected)opener.focus();
+    else if(opener&&opener.dataset&&opener.dataset.store){const b=document.querySelector('#storeStatus .ss-badge[data-store="'+opener.dataset.store+'"]');if(b)b.focus();}
+  };
+  function open(label){liveBuild=null;title.textContent=label;content.replaceChildren();box.hidden=false;document.getElementById('overviewClose').focus();}
+  /* 見方・更新／営業状況の詳細。取得状態が変わったら開いたまま中身を作り直す */
+  window.openInfoDialog=function(btn,kind){
+    opener=btn;
+    const status=kind==='status';
+    open(status?statusView().md+'の営業状況':'見方・更新');
+    liveBuild=status?c=>{buildStatusInfo(c);buildRefreshButton(c);}
+      :c=>{buildRefreshButton(c);buildShiftInfo(c);buildStatusInfo(c);buildGuide(c);};
+    liveBuild(content);
+  };
+  window.refreshInfoDialog=function(){
+    if(box.hidden||!liveBuild)return;
+    const fk=box.contains(document.activeElement)&&document.activeElement.dataset?document.activeElement.dataset.fk:'';
+    const top=box.firstElementChild.scrollTop;
+    content.replaceChildren();liveBuild(content);
+    box.firstElementChild.scrollTop=top;
+    if(fk){const n=content.querySelector('[data-fk="'+fk+'"]');if(n)n.focus();}
+    else if(!box.contains(document.activeElement))document.getElementById('overviewClose').focus();
+  };
   document.getElementById('overviewClose').onclick=close;
   box.addEventListener('click',e=>{if(e.target===box)close()});
   box.addEventListener('keydown',e=>{
@@ -1698,10 +1810,9 @@ function initOverview(){
     e.preventDefault();e.stopImmediatePropagation();showRow(tr);
   },true);
   document.getElementById('tBody').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr')){e.preventDefault();showRow(e.target)}});
-  document.getElementById('overviewInfo').onclick=function(){
-    opener=this;open('店舗カラー・イベント');
-    const legend=document.querySelector('.bottom-section').cloneNode(true);legend.removeAttribute('class');legend.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));content.appendChild(legend);
-  };
+  document.getElementById('overviewInfo').onclick=function(){window.openInfoDialog(this,'info');};
+  document.getElementById('syncAlert').onclick=function(){window.openInfoDialog(this,'info');};
+  document.getElementById('refreshBtn').onclick=refreshAll;
   const body=document.getElementById('tBody');
   new MutationObserver(()=>{body.querySelectorAll('tr').forEach(tr=>{tr.tabIndex=0;tr.setAttribute('aria-label',(tr.querySelector('.c-name')?.textContent||'')+'の予定を拡大')});overviewTimes();}).observe(body,{childList:true});
   new ResizeObserver(()=>requestAnimationFrame(overviewFit)).observe(document.querySelector('.table-wrap'));
@@ -1723,36 +1834,100 @@ const STATUS_URL='https://ms-store-status.kc-masashi0614.workers.dev/status';
 const STATUS_SLUG={L:'linaria',M:'ismelty',Y:'lily'};
 const STATUS_INTERVAL=60*1000, STATUS_TIMEOUT=8000, STATUS_MAX_AGE=3*60*1000;
 let storeStatus={day:'',at:0,closed:{},failed:false};
-let statusGen=0, statusCtl=null, statusShown='';
+let statusGen=0, statusCtl=null, statusShown='', statusBusy=false;
+const STATUS_SHORT={L:'Linaria',M:'Melty',Y:'Lily'};
 function statusBizDay(now=new Date()){const d=jstNow(now);if(d.getUTCHours()<10)d.setUTCDate(d.getUTCDate()-1);return dateKey(d);}
-function renderStoreStatus(){
-  const el=document.getElementById('storeStatus');if(!el)return;
+/* 表示用の判定（同じ営業日・3分以内に取得したものだけ closed。それ以外は未確認） */
+function statusView(){
   const now=new Date(),day=statusBizDay(now);
   const fresh=storeStatus.day===day&&Date.now()-storeStatus.at<=STATUS_MAX_AGE;
   const closed=fresh?storeStatus.closed:{};
-  const p=day.split('-').map(Number),md=p[1]+'/'+p[2];
-  const whenDay=dateKey(jstNow(now))===day?'本日':md+'（'+WD[new Date(day+'T12:00:00Z').getUTCDay()]+'）';
-  const stores=activeFilter==='all'?['L','M','Y']:[activeFilter];
-  const parts=[['ss-label','現在の営業状況（'+md+'営業分）']];
-  stores.forEach(s=>{
-    const c=Object.prototype.hasOwnProperty.call(closed,s);
-    const txt=activeFilter==='all'?(c?'営業終了':'未確認'):(c?whenDay+'の営業は終了しました':'営業状況は未確認');
-    parts.push([c?'ss-item ss-closed':'ss-item ss-unknown',STORE_NAMES[s]+' '+txt]);
-  });
-  const checked=fresh?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(storeStatus.at)):'';
-  parts.push(['ss-note',storeStatus.failed?'取得できません・約1分後に再確認':checked?checked+'確認・約1分ごとに更新':'営業状況を確認中']);
-  if(stores.some(s=>!Object.prototype.hasOwnProperty.call(closed,s)))parts.push(['ss-note ss-caution','未確認＝営業中の確認は取れていません']);
-  const key=JSON.stringify(parts);
+  const p=day.split('-').map(Number);
+  return {
+    day, md:p[1]+'/'+p[2],
+    full:p[1]+'月'+p[2]+'日（'+WD[new Date(day+'T12:00:00Z').getUTCDay()]+'）',
+    stores:activeFilter==='all'?['L','M','Y']:[activeFilter],
+    isClosed:s=>Object.prototype.hasOwnProperty.call(closed,s),
+    checked:fresh?new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(storeStatus.at)):''
+  };
+}
+function renderStoreStatus(){
+  const el=document.getElementById('storeStatus');if(!el)return;
+  const v=statusView(),all=activeFilter==='all';
+  el.classList.toggle('is-single',!all);
+  /* 確認時刻はキーに含めない（毎分の読み上げ・再描画を避ける。時刻はダイアログに表示） */
+  const key=JSON.stringify([v.md,v.stores,v.stores.map(v.isClosed)]);
   if(key===statusShown)return;
   statusShown=key;
-  el.replaceChildren(...parts.map(([cls,txt])=>{const sp=document.createElement('span');sp.className=cls;sp.textContent=txt;return sp;}));
+  const label=document.createElement('span');label.className='ss-label';label.textContent=v.md+'の営業';
+  const badges=v.stores.map(s=>{
+    const c=v.isClosed(s);
+    const b=document.createElement('button');b.type='button';b.className='ss-badge '+(c?'is-closed':'is-unknown');b.dataset.store=s;
+    b.setAttribute('aria-haspopup','dialog');
+    b.setAttribute('aria-label',STORE_NAMES[s]+'　'+v.full+'の営業：'+(c?'営業終了':'未確認（営業終了の報告をまだ確認できていません）')+'。詳細を開く');
+    const dot=document.createElement('span');dot.className='ss-dot';dot.setAttribute('aria-hidden','true');
+    const nm=document.createElement('span');nm.className='ss-name';nm.textContent=all?STATUS_SHORT[s]:STORE_NAMES[s];
+    const st=document.createElement('span');st.className='ss-state';st.textContent=c?(all?'終了':'営業終了'):'未確認';
+    b.append(dot,nm,st);
+    b.addEventListener('click',()=>window.openInfoDialog(b,'status'));
+    return b;
+  });
+  el.replaceChildren(label,...badges);
   requestAnimationFrame(overviewFit);
+}
+/* ---- 見方・更新ダイアログの中身（すべて textContent で組み立てる） ---- */
+function infoSection(c,heading,lines,note){
+  const sec=document.createElement('section');sec.className='info-sec';
+  const h=document.createElement('h3');h.textContent=heading;sec.appendChild(h);
+  const ul=document.createElement('ul');ul.className='info-list';
+  lines.forEach(([txt,err])=>{const li=document.createElement('li');li.textContent=txt;if(err)li.className='err';ul.appendChild(li);});
+  sec.appendChild(ul);
+  if(note){const p=document.createElement('p');p.className='info-note';p.textContent=note;sec.appendChild(p);}
+  c.appendChild(sec);
+}
+function buildRefreshButton(c){
+  const b=document.createElement('button');b.type='button';b.className='info-refresh';b.dataset.fk='refresh';
+  const busy=fetchState==='loading'||statusBusy;
+  b.textContent=busy?'更新中…':'↻ 今すぐ更新（シフト・営業状況）';
+  b.onclick=refreshAll;c.appendChild(b);
+}
+function buildShiftInfo(c){
+  const stamp=lastOkAt?clockHM(lastOkAt):'—';
+  const lines=[
+    fetchState==='loading'?['シフト：読み込み中…']
+    :fetchState==='error'?['シフト：取得できません（最終取得 '+stamp+'）',true]
+    :['シフト：最終取得 '+stamp+'（日本時間）'],
+    ['シフトは5分ごと・画面に戻ったときに自動で更新します。']
+  ];
+  const n=document.getElementById('notice');
+  if(n&&!n.hidden&&n.textContent.trim())lines.push([n.textContent.trim(),n.classList.contains('err')]);
+  infoSection(c,'シフトの更新',lines);
+}
+function buildStatusInfo(c){
+  const v=statusView();
+  const lines=v.stores.map(s=>[STORE_NAMES[s]+'：'+(v.isClosed(s)?'営業終了（日報の送信を確認済み）':'未確認')]);
+  lines.push(storeStatus.failed?['営業状況を取得できません。約1分後に自動で再確認します。',true]
+    :v.checked?[v.checked+' に確認・約1分ごとに自動更新']
+    :[statusBusy?'営業状況を確認中…':'営業状況はまだ確認できていません。']);
+  infoSection(c,'営業状況（'+v.full+'の営業分）',lines,
+    '「営業終了」は、その営業日の日報送信を確認できた店舗だけに表示します。「未確認」は営業中という意味ではありません。営業日の区切りは日本時間10時です。');
+}
+function buildGuide(c){
+  infoSection(c,'表の見方',[
+    ['時刻＝出勤–退勤。18-23:30 は 18:00〜23:30。'],
+    ['L＝閉店まで。退勤が0〜5時のときは翌朝です。'],
+    ['行をタップすると、その子の予定と写真を拡大表示します（𝕏 もそこから開けます）。'],
+    ['日付：黄色の丸＝今日／点＝イベント日／赤＝日曜・祝日／青＝土曜'],
+    ['上の店舗ボタンで絞り込み、‹ › で前後の半月へ移動できます。']
+  ],'※予定は変更になる場合があります。');
+  const legend=document.querySelector('.bottom-section').cloneNode(true);legend.removeAttribute('class');legend.querySelector('.tm-legend')?.remove();legend.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));c.appendChild(legend);
 }
 async function fetchStoreStatus(){
   if(document.hidden)return;
   const gen=++statusGen;
   if(statusCtl)statusCtl.abort();
   const ctl=new AbortController();statusCtl=ctl;
+  statusBusy=true;updateSyncUI();
   const timer=setTimeout(()=>ctl.abort(),STATUS_TIMEOUT);
   try{
     const r=await fetch(STATUS_URL,{cache:'no-store',credentials:'omit',signal:ctl.signal});
@@ -1774,12 +1949,12 @@ async function fetchStoreStatus(){
   }finally{
     clearTimeout(timer);
     if(statusCtl===ctl)statusCtl=null;
+    if(gen===statusGen)statusBusy=false;
   }
-  renderStoreStatus();
+  renderStoreStatus();updateSyncUI();
 }
 function initStoreStatus(){
   renderStoreStatus();fetchStoreStatus();
-  document.getElementById('reloadBtn')?.addEventListener('click',fetchStoreStatus);
   setInterval(()=>{renderStoreStatus();fetchStoreStatus();},STATUS_INTERVAL);
   const back=()=>{if(!document.hidden){renderStoreStatus();fetchStoreStatus();}};
   document.addEventListener('visibilitychange',back);

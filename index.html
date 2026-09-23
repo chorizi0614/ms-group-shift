@@ -1011,6 +1011,21 @@ body.table-mode .nav-row,body.day-mode .nav-row{grid-template-columns:minmax(0,1
 .nav-period{grid-column:1;justify-self:center}
 .nav-tools{grid-column:2}
 .sync-alert{width:32px;min-width:32px;padding:0;font-size:17px}
+
+/* 小さい表でも文字の高さを保ち、店舗選択と営業状態の意味を区別する。 */
+body.table-mode .shift .time-inline{font-family:Arial,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;font-variant-numeric:tabular-nums;font-size:11px;letter-spacing:-.35px}
+body.table-mode .table-wrap .th-d{font-family:Arial,sans-serif;font-size:11px;font-variant-numeric:tabular-nums}
+body.table-mode .ftab.is-L[aria-pressed="true"],body.day-mode .ftab.is-L[aria-pressed="true"]{background:#dceff4;border-color:#398da4;color:#174e60}
+body.table-mode .ftab.is-M[aria-pressed="true"],body.day-mode .ftab.is-M[aria-pressed="true"]{background:#f5deec;border-color:#a84a81;color:#702c56}
+body.table-mode .ftab.is-Y[aria-pressed="true"],body.day-mode .ftab.is-Y[aria-pressed="true"]{background:#e7e1f2;border-color:#817099;color:#47385d}
+.ss-badge.is-closed{background:#f0eef2;border-color:#d3cdd9;color:#5f5768}
+.ss-badge.is-closed .ss-state{color:#5f5768;font-weight:600}
+.ss-badge.is-open .ss-dot{background:#258457}
+.ss-badge.is-closed .ss-dot{background:#918999}
+.ss-badge.is-unknown .ss-dot{background:#b4aabb}
+.store-status .ss-badge{min-height:36px}
+#tBody tr:focus-visible{outline:2px solid #76568e;outline-offset:-2px}
+@media(prefers-reduced-motion:reduce){.icon-btn.busy svg{animation:none}html{scroll-behavior:auto}}
 </style>
 </head>
 <body class="table-mode">
@@ -1730,7 +1745,7 @@ function overviewFit(){
     span.style.transform='';
     const available=span.parentElement.clientWidth;
     const natural=span.scrollWidth;
-    if(natural>available&&available>0)span.style.transform='scale('+Math.min(1,available/natural)+')';
+    if(natural>available&&available>0)span.style.transform='scaleX('+Math.min(1,available/natural)+')';
   });
 }
 function overviewTimes(){

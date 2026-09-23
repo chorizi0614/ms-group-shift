@@ -974,6 +974,8 @@ body.table-mode .overview-actions,body.day-mode .overview-actions{display:flex;j
 body.table-mode .overview-actions button,body.day-mode .overview-actions button,body.table-mode #saveImgBtn{flex:1;max-width:180px;min-height:40px;margin:0;padding:0 14px;justify-content:center;font-size:13px;font-weight:700;border-radius:12px;background:#fff;color:#694b7a;border:1px solid #d8c8e3;cursor:pointer}
 #saveImgBtn:disabled{opacity:.5;cursor:default}
 /* 見方・更新ダイアログ */
+#overviewEvents{background:#f3e7f5;color:#69416f;border-color:#bb91c6;}
+@media(max-width:360px){body.table-mode .overview-actions button,body.day-mode .overview-actions button{padding:0 6px;font-size:12px;}}
 .info-sec{margin:0 0 14px}
 .info-sec h3{font-size:14px;color:#5b4365;margin:0 0 6px}
 .info-list{list-style:none;display:grid;gap:3px;font-size:13px;line-height:1.6;color:#4f4358}
@@ -1117,7 +1119,7 @@ body.table-mode .ftab.is-Y[aria-pressed="true"],body.day-mode .ftab.is-Y[aria-pr
   </table>
 </div>
 
-<div class="overview-actions"><button type="button" id="overviewInfo" aria-haspopup="dialog">見方・更新</button><button class="cmp-btn" id="saveImgBtn" onclick="saveImage()">画像保存</button></div>
+<div class="overview-actions"><button type="button" id="overviewEvents" aria-haspopup="dialog">イベント</button><button type="button" id="overviewInfo" aria-haspopup="dialog">見方・更新</button><button class="cmp-btn" id="saveImgBtn" onclick="saveImage()">画像保存</button></div>
 <button class="cmp-btn on" id="cmpBtn" onclick="toggleCompact()">
   <span class="cmp-icon">⊟</span>通常表示
 </button>
@@ -1772,8 +1774,8 @@ function initOverview(){
   window.openInfoDialog=function(btn,kind){
     opener=btn;
     const status=kind==='status';
-    open(status?statusView().md+'の営業状況':'見方・更新');
-    liveBuild=status?c=>{buildStatusInfo(c);buildRefreshButton(c);}
+    open(status?statusView().md+'の営業状況':kind==='events'?'イベント情報':'見方・更新');
+    liveBuild=kind==='events'?buildEventInfo:status?c=>{buildStatusInfo(c);buildRefreshButton(c);}
       :c=>{buildRefreshButton(c);buildShiftInfo(c);buildStatusInfo(c);buildGuide(c);};
     liveBuild(content);
   };
@@ -1827,6 +1829,7 @@ function initOverview(){
     e.preventDefault();e.stopImmediatePropagation();showRow(tr);
   },true);
   document.getElementById('tBody').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr')){e.preventDefault();showRow(e.target)}});
+  document.getElementById('overviewEvents').onclick=function(){window.openInfoDialog(this,'events');};
   document.getElementById('overviewInfo').onclick=function(){window.openInfoDialog(this,'info');};
   document.getElementById('syncAlert').onclick=function(){window.openInfoDialog(this,'info');};
   document.getElementById('refreshBtn').onclick=refreshAll;
@@ -1942,6 +1945,12 @@ function buildStatusInfo(c){
   infoSection(c,'営業状況（'+v.full+'の営業分）',lines,
     '営業状況は表示の日付の営業分です。「確認中」の場合は、最新の営業状況を取得できていません。');
 }
+function buildEventInfo(c){
+  const card=document.querySelector('.ev-card').cloneNode(true);
+  card.querySelector('.ev-head')?.remove();
+  card.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+  c.appendChild(card);
+}
 function buildGuide(c){
   infoSection(c,'表の見方',[
     ['時刻＝出勤–退勤。18-23:30 は 18:00〜23:30。'],
@@ -1950,7 +1959,7 @@ function buildGuide(c){
     ['日付：黄色の丸＝今日／点＝イベント日／赤＝日曜・祝日／青＝土曜'],
     ['上の店舗ボタンで絞り込み、‹ › で前後の半月へ移動できます。']
   ],'※予定は変更になる場合があります。');
-  const legend=document.querySelector('.bottom-section').cloneNode(true);legend.removeAttribute('class');legend.querySelector('.tm-legend')?.remove();legend.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));c.appendChild(legend);
+  const legend=document.querySelector('.legend').cloneNode(true);legend.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));c.appendChild(legend);
 }
 async function fetchStoreStatus(){
   if(document.hidden)return;

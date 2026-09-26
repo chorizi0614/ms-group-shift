@@ -1025,6 +1025,9 @@ body.table-mode .ftab.is-Y[aria-pressed="true"],body.day-mode .ftab.is-Y[aria-pr
 .ss-badge.is-open .ss-dot{background:#258457}
 .ss-badge.is-closed .ss-dot{background:#918999}
 .ss-badge.is-unknown .ss-dot{background:#b4aabb}
+.ss-badge.is-preopen{background:#fbf4e6;border-color:#d9bf8c;color:#654a17}
+.ss-badge.is-preopen .ss-state{font-weight:700;color:#654a17}
+.ss-badge.is-preopen .ss-dot{background:#c38f2c}
 .store-status .ss-badge{min-height:36px}
 #tBody tr:focus-visible{outline:2px solid #76568e;outline-offset:-2px}
 @media(prefers-reduced-motion:reduce){.icon-btn.busy svg{animation:none}html{scroll-behavior:auto}}
@@ -1189,28 +1192,31 @@ let shownPeriodKey='';      // いま表の中身が示している期間
    ・long=true で 18:00–23:30 の完全表記（title属性・ツールチップ用）
    ・解釈できない文字列は絶対に捨てず、そのまま返す
 ===================================================== */
-function fmtShiftTime(raw, long){
-  if(raw==null) return '';
-  var s=String(raw).trim();
-  if(!s) return '';
-  var t=s
+/* 表記の正規化と時刻1つの解釈（fmtShiftTime と営業状況の開始時刻判定で共用） */
+function shiftTimeNorm(s){
+  return s
     .replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);})
     .replace(/：/g,':').replace(/．/g,'.')
     .replace(/時/g,':').replace(/分/g,'')
     .replace(/[〜～~－—–―]/g,'-')
     .replace(/\s/g,'');
-
-  function tok(x){
-    if(!x) return null;
-    var nx=false, m;
-    x=x.replace(/^(翌日|翌)/,function(){nx=true;return '';}).replace(/:+$/,'');
-    if(/^(l|last|ラスト|らすと|ﾗｽﾄ)$/i.test(x)) return {last:true};
-    if((m=x.match(/^(\d{1,2}):(\d{1,2})$/))) return {h:+m[1],mi:+m[2],nx:nx};
-    if((m=x.match(/^(\d{1,2})\.(\d+)$/)))    return {h:+m[1],mi:Math.round(parseFloat('0.'+m[2])*60),nx:nx};
-    if((m=x.match(/^(\d{1,2})$/)))           return {h:+m[1],mi:0,nx:nx};
-    if((m=x.match(/^(\d{2})(\d{2})$/)))      return {h:+m[1],mi:+m[2],nx:nx};
-    return null;
-  }
+}
+function shiftTimeTok(x){
+  if(!x) return null;
+  var nx=false, m;
+  x=x.replace(/^(翌日|翌)/,function(){nx=true;return '';}).replace(/:+$/,'');
+  if(/^(l|last|ラスト|らすと|ﾗｽﾄ)$/i.test(x)) return {last:true};
+  if((m=x.match(/^(\d{1,2}):(\d{1,2})$/))) return {h:+m[1],mi:+m[2],nx:nx};
+  if((m=x.match(/^(\d{1,2})\.(\d+)$/)))    return {h:+m[1],mi:Math.round(parseFloat('0.'+m[2])*60),nx:nx};
+  if((m=x.match(/^(\d{1,2})$/)))           return {h:+m[1],mi:0,nx:nx};
+  if((m=x.match(/^(\d{2})(\d{2})$/)))      return {h:+m[1],mi:+m[2],nx:nx};
+  return null;
+}
+function fmtShiftTime(raw, long){
+  if(raw==null) return '';
+  var s=String(raw).trim();
+  if(!s) return '';
+  var t=shiftTimeNorm(s), tok=shiftTimeTok;
   function one(x,next){
     var h=((x.h%24)+24)%24, mi=x.mi||0;
     var body=(mi||long||next)?(h+':'+(mi<10?'0'+mi:mi)):String(h);
@@ -1845,37 +1851,62 @@ function initOverview(){
    現在の営業状況（2026-09-24）
    ---------------------------------------------------
    日報が Discord へ送信された店舗・営業日だけを「営業終了」と表示する。
-   ・表示中の期間とは無関係に「いまの営業日」（日本時間10:00切替＝日報の日付）を表示
-   ・確認済みclosed優先。それ以外は当営業日のシフトあり=open、なし=closed。
+   ・表示中の期間とは無関係に「いまの営業日」（日本時間9:00切替＝日報フォームの日付）を表示
+   ・確認済みclosed優先。当営業日のシフトなし=closed。シフトありは最も早い出勤時刻より前=preopen、
+     以後=open（終業時刻では自動終了しない。延長があるため日報による終了確認まで営業中）。
+     開始時刻が読めない行で判定できないときはunknown（開店時刻を推測しない）。
      未公開の半月・取得失敗はunknown。閲覧期間と独立して当月シフトを取得。
    ・保存済みの状態は使わない。取得失敗・日付の切替・3分以上古い取得は即「確認中」
 ===================================================== */
 const STATUS_URL='https://ms-store-status.kc-masashi0614.workers.dev/status';
 const STATUS_SLUG={L:'linaria',M:'ismelty',Y:'lily'};
 const STATUS_INTERVAL=60*1000, STATUS_TIMEOUT=8000, STATUS_MAX_AGE=3*60*1000;
+const STATUS_CUTOFF_H=9;
 let storeStatus={day:'',at:0,closed:{},failed:false};
 let statusShifts={day:'',rows:[],at:0};
 let statusGen=0, statusCtl=null, statusShown='', statusBusy=false;
 const STATUS_SHORT={L:'Linaria',M:'Melty',Y:'Lily'};
-function statusBizDay(now=new Date()){const d=jstNow(now);if(d.getUTCHours()<10)d.setUTCDate(d.getUTCDate()-1);return dateKey(d);}
-/* 営業状況: 確認済み閉店を優先し、当営業日の公開シフトで営業中/終了を判定。 */
-function resolveStoreState(store,day,closed,rows,fresh){
+function statusBizDay(now=new Date()){const d=jstNow(now);if(d.getUTCHours()<STATUS_CUTOFF_H)d.setUTCDate(d.getUTCDate()-1);return dateKey(d);}
+/* 出勤開始を営業日0時からの分で返す（営業日は9:00〜翌9:00。翌付き・0〜8時台・24時以上は翌朝）。
+   読めない／営業日外の開始は NaN。 */
+function shiftStartMin(raw){
+  const s=String(raw??'').trim();if(!s)return NaN;
+  const a=shiftTimeTok(shiftTimeNorm(s).split('-')[0]);
+  if(!a||a.last||!(a.mi>=0&&a.mi<60)||(a.nx&&a.h>=24))return NaN;
+  const m=a.h*60+a.mi+((a.nx||a.h<STATUS_CUTOFF_H)?1440:0);
+  return m>=STATUS_CUTOFF_H*60&&m<(24+STATUS_CUTOFF_H)*60?m:NaN;
+}
+/* 当営業日のその店舗の出勤開始（分）一覧。読めない行は NaN のまま残す。 */
+function storeShiftStarts(store,day,rows){
+  const n=Number(day.slice(-2));
+  return rows.filter(r=>Array.isArray(r)&&r[0]&&Number(r[1])===n&&r[2]===store&&String(r[3]||'').trim()).map(r=>shiftStartMin(r[3]));
+}
+/* 営業状況: 確認済み閉店を優先し、当営業日の公開シフトで開店前/営業中/終了を判定。 */
+function resolveStoreState(store,day,closed,rows,fresh,now=new Date()){
   if(Object.prototype.hasOwnProperty.call(closed,store))return 'closed';
   if(!fresh)return 'unknown';
   const n=Number(day.slice(-2)),half=n<=15?1:2;
   const published=rows.some(r=>Array.isArray(r)&&r[0]&&Number(r[1])>=1&&Number(r[1])<=31&&(Number(r[1])<=15?1:2)===half&&STATUS_SLUG[r[2]]&&String(r[3]||'').trim());
   if(!published)return 'unknown';
-  return rows.some(r=>Array.isArray(r)&&r[0]&&Number(r[1])===n&&r[2]===store&&String(r[3]||'').trim())?'open':'closed';
+  const starts=storeShiftStarts(store,day,rows);
+  if(!starts.length)return 'closed';
+  const t=(Number(now)-Date.parse(day+'T00:00:00+09:00'))/60000;
+  if(!(t>=STATUS_CUTOFF_H*60&&t<(24+STATUS_CUTOFF_H)*60))return 'unknown';
+  const ok=starts.filter(Number.isFinite);
+  if(ok.length&&t>=Math.min(...ok))return 'open';
+  return ok.length===starts.length?'preopen':'unknown';
 }
-const STATUS_TEXT={open:'営業中',closed:'営業終了',unknown:'確認中'};
+function fmtStartMin(m){return (m>=1440?'翌':'')+Math.floor(m%1440/60)+':'+String(m%60).padStart(2,'0');}
+const STATUS_TEXT={preopen:'開店前',open:'営業中',closed:'営業終了',unknown:'確認中'};
 function statusView(){
   const now=new Date(),day=statusBizDay(now);
   const fresh=storeStatus.day===day&&Date.now()-storeStatus.at<=STATUS_MAX_AGE;
   const closed=fresh?storeStatus.closed:{};
   const p=day.split('-').map(Number);
   const shiftsFresh=statusShifts.day===day&&Date.now()-statusShifts.at<=STATUS_MAX_AGE;
-  const state=s=>resolveStoreState(s,day,closed,statusShifts.rows,fresh&&shiftsFresh);
+  const state=s=>resolveStoreState(s,day,closed,statusShifts.rows,fresh&&shiftsFresh,now);
   return {
+    opensAt:s=>state(s)==='preopen'?fmtStartMin(Math.min(...storeShiftStarts(s,day,statusShifts.rows))):'',
     day, md:p[1]+'/'+p[2],
     full:p[1]+'月'+p[2]+'日（'+WD[new Date(day+'T12:00:00Z').getUTCDay()]+'）',
     stores:activeFilter==='all'?['L','M','Y']:[activeFilter],
@@ -1938,12 +1969,12 @@ function buildShiftInfo(c){
 }
 function buildStatusInfo(c){
   const v=statusView();
-  const lines=v.stores.map(s=>[STORE_NAMES[s]+'：'+STATUS_TEXT[v.state(s)]]);
+  const lines=v.stores.map(s=>{const o=v.opensAt(s);return [STORE_NAMES[s]+'：'+STATUS_TEXT[v.state(s)]+(o?'（'+o+'から営業予定）':'')];});
   lines.push(storeStatus.failed?['営業状況を取得できません。約1分後に自動で再確認します。',true]
     :v.checked?[v.checked+' に確認・約1分ごとに自動更新']
     :[statusBusy?'営業状況を確認中…':'営業状況はまだ確認できていません。']);
   infoSection(c,'営業状況（'+v.full+'の営業分）',lines,
-    '営業状況は表示の日付の営業分です。「確認中」の場合は、最新の営業状況を取得できていません。');
+    '営業状況は表示の日付の営業分です。「開店前」は最初の出勤時刻まで、以後は営業終了まで「営業中」です。「確認中」の場合は、最新の営業状況を取得できていません。');
 }
 function buildEventInfo(c){
   const card=document.querySelector('.ev-card').cloneNode(true);
